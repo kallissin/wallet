@@ -1,8 +1,9 @@
-from flask import Flask, jsonify
+from flask import Flask
+from app.configs import env_configs
 
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
+    env_configs.init_app(app)
 
-@app.get("/")
-def get_all():
-    return jsonify({"message": "initial aplication"}), 200
+    return app
