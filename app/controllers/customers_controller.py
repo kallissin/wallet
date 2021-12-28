@@ -24,3 +24,17 @@ def get_customer_by_id(customer_id):
     customer = CustomerModel.query.filter_by(id=customer_id).first_or_404()
 
     return jsonify(customer), HTTPStatus.OK
+
+
+def update_customer(customer_id):
+    data = request.get_json()
+
+    customer = CustomerModel.query.filter_by(id=customer_id).first_or_404()
+
+    for key, value in data.items():
+        setattr(customer, key, value)
+
+    current_app.db.session.add(customer)
+    current_app.db.session.commit()
+
+    return jsonify(customer), HTTPStatus.OK
