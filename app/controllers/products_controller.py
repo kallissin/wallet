@@ -18,3 +18,9 @@ def create_product():
     current_app.db.session.commit()
 
     return jsonify(product), HTTPStatus.CREATED
+
+
+def get_all_products():
+    list_products = ProductModel.query.order_by(ProductModel.id).all()
+
+    return jsonify(list_products)
