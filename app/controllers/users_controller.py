@@ -11,3 +11,8 @@ def create_user():
     current_app.db.session.commit()
 
     return jsonify(user), 201
+
+
+def get_all_user():
+    users_list = UserModel.query.order_by(UserModel.id).all()
+    return jsonify(users_list)
