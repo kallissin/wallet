@@ -18,4 +18,10 @@ def get_all_categories():
 
     list_categories = CategoryModel.query.order_by(CategoryModel.id).all()
 
-    return jsonify(list_categories)
+    return jsonify(list_categories), HTTPStatus.OK
+
+
+def get_category_by_id(category_id):
+    category = CategoryModel.query.filter_by(id=category_id).first_or_404()
+
+    return jsonify(category), HTTPStatus.OK
