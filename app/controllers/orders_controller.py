@@ -20,3 +20,9 @@ def get_all_orders():
     list_orders = OrderModel.query.order_by(OrderModel.id).all()
 
     return jsonify(list_orders)
+
+
+def get_order_by_id(order_id):
+    order = OrderModel.query.filter_by(id=order_id).first_or_404()
+
+    return jsonify(order)
