@@ -18,3 +18,9 @@ def get_all_customer():
     customers_list = CustomerModel.query.order_by(CustomerModel.id).all()
 
     return jsonify(customers_list), HTTPStatus.OK
+
+
+def get_customer_by_id(customer_id):
+    customer = CustomerModel.query.filter_by(id=customer_id).first_or_404()
+
+    return jsonify(customer), HTTPStatus.OK
