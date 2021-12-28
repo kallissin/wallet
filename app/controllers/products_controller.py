@@ -44,3 +44,13 @@ def update_product(product_id):
     current_app.db.session.commit()
 
     return jsonify(product), HTTPStatus.OK
+
+
+def delete_product(product_id):
+
+    product = ProductModel.query.filter_by(id=product_id).first_or_404()
+
+    current_app.db.session.delete(product)
+    current_app.db.session.commit()
+
+    return jsonify(""), HTTPStatus.NO_CONTENT
