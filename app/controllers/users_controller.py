@@ -38,3 +38,12 @@ def update_user(user_id):
     current_app.db.session.commit()
 
     return jsonify(user)
+
+
+def delete_user(user_id):
+
+    user = UserModel.query.filter_by(id=user_id).first_or_404()
+    current_app.db.session.delete(user)
+    current_app.db.session.commit()
+
+    return jsonify(""), 204
