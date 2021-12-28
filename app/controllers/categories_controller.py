@@ -39,3 +39,13 @@ def update_category(category_id):
     current_app.db.session.commit()
 
     return jsonify(category), HTTPStatus.OK
+
+
+def delete_category(category_id):
+
+    category = CategoryModel.query.filter_by(id=category_id).first_or_404()
+
+    current_app.db.session.delete(category)
+    current_app.db.session.commit()
+
+    return jsonify(""), HTTPStatus.NO_CONTENT
