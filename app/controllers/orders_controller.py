@@ -14,3 +14,9 @@ def create_order():
     current_app.db.session.commit()
 
     return jsonify(order), HTTPStatus.CREATED
+
+
+def get_all_orders():
+    list_orders = OrderModel.query.order_by(OrderModel.id).all()
+
+    return jsonify(list_orders)
