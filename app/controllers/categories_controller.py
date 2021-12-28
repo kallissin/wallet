@@ -25,3 +25,17 @@ def get_category_by_id(category_id):
     category = CategoryModel.query.filter_by(id=category_id).first_or_404()
 
     return jsonify(category), HTTPStatus.OK
+
+
+def update_category(category_id):
+    data = request.get_json()
+
+    category = CategoryModel.query.filter_by(id=category_id).first_or_404()
+
+    for key, value in data.items():
+        setattr(category, key, value)
+
+    current_app.db.session.add(category)
+    current_app.db.session.commit()
+
+    return jsonify(category), HTTPStatus.OK
