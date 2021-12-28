@@ -8,4 +8,5 @@ def init_app(app: Flask):
     from app.models.category_model import CategoryModel
     from app.models.product_model import ProductModel
     from app.models.order_model import OrderModel
+    from app.models.order_product_model import OrderProductModel
     Migrate(app, app.db)
