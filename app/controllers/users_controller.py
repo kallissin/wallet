@@ -63,6 +63,7 @@ def login():
 
         if user.check_password(password):
             return jsonify({"token": create_access_token(user, fresh=datetime.timedelta(minutes=2))})
-
+        else:
+            return jsonify({"message": "password incorrect"}), HTTPStatus.UNAUTHORIZED
     except NotFound:
         return {"message": "user not found"}, HTTPStatus.NOT_FOUND
