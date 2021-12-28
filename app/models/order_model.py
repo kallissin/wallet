@@ -18,7 +18,7 @@ class OrderModel(db.Model):
 
     id = Column(Integer, primary_key=True)
     sold_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
-    total = Column(Float, default=0, nullable=False)
+    total = Column(Float)
     cashback_id = Column(Integer)
     customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
 
