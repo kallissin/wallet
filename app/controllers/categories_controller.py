@@ -12,3 +12,10 @@ def create_category():
     current_app.db.session.commit()
 
     return jsonify(category), HTTPStatus.CREATED
+
+
+def get_all_categories():
+
+    list_categories = CategoryModel.query.order_by(CategoryModel.id).all()
+
+    return jsonify(list_categories)
