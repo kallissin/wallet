@@ -20,4 +20,4 @@ class OrderProductModel(db.Model):
     value = Column(Float, nullable=False)
     qty = Column(Integer, nullable=False)
 
-    product = relationship('Product')
+    product = relationship('ProductModel')
