@@ -24,3 +24,9 @@ def get_all_products():
     list_products = ProductModel.query.order_by(ProductModel.id).all()
 
     return jsonify(list_products)
+
+
+def get_product_by_id(product_id):
+    product = ProductModel.query.filter_by(id=product_id).first_or_404()
+
+    return jsonify(product)
