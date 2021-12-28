@@ -16,3 +16,8 @@ def create_user():
 def get_all_user():
     users_list = UserModel.query.order_by(UserModel.id).all()
     return jsonify(users_list)
+
+
+def get_user_by_id(user_id):
+    user = UserModel.query.filter_by(id=user_id).first_or_404()
+    return jsonify(user)
