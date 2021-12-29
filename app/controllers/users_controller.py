@@ -1,5 +1,5 @@
 from flask import jsonify, request, current_app
-from app.exceptions.exc import InvalidValueError
+from app.exceptions.exc import InvalidValueError, InvalidKeyError, RequiredKeyError
 from app.models.user_model import UserModel
 from flask_jwt_extended import create_access_token
 import datetime
@@ -9,8 +9,8 @@ from http import HTTPStatus
 
 def create_user():
     data = request.get_json()
-
     try:
+        UserModel.validate_data(data)
         user = UserModel(**data)
 
         current_app.db.session.add(user)
@@ -18,9 +18,11 @@ def create_user():
 
         return jsonify(user), HTTPStatus.CREATED
     except InvalidValueError as err:
-        return jsonify({"message": str(err)}), HTTPStatus.BAD_REQUEST
-    except AttributeError:
-        return jsonify({"message": "password must be of type 'str'"}), HTTPStatus.BAD_REQUEST
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except InvalidKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except RequiredKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
 
 
 def get_all_user():
