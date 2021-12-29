@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from app.models.order_model import OrderModel
+import requests
 
 
 def calculate_discount(value, discount):
@@ -26,6 +27,13 @@ def generate_cashback():
 
     order = OrderModel.query.filter_by(id=data['order_id']).first_or_404()
 
-    cashback = calculate_cashback(order.itens)
+    payload = {
+        'cashback': calculate_cashback(order.itens),
+        'document': order.customer.cpf
+    }
 
-    return jsonify(cashback)
+    url = "https://5efb30ac80d8170016f7613d.mockapi.io/api/mock/Cashback"
+
+    new_data = requests.post(url, payload)
+
+    return jsonify(new_data.json())
