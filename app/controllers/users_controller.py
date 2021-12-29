@@ -5,7 +5,8 @@ from flask_jwt_extended import create_access_token
 import datetime
 from werkzeug.exceptions import NotFound
 from http import HTTPStatus
-
+from sqlalchemy.exc import IntegrityError
+from psycopg2.errors import UniqueViolation
 
 def create_user():
     data = request.get_json()
@@ -23,7 +24,13 @@ def create_user():
         return jsonify(err.message), HTTPStatus.BAD_REQUEST
     except RequiredKeyError as err:
         return jsonify(err.message), HTTPStatus.BAD_REQUEST
-
+    except IntegrityError as err:
+        if isinstance(err.orig, UniqueViolation):
+            constraint = str(err.args).split('_')[1]
+            if constraint == 'username':    
+                return jsonify({"message": "username already exists"}), HTTPStatus.CONFLICT
+            if constraint == 'email':
+                return jsonify({"message": "email already exists"}), HTTPStatus.CONFLICT
 
 def get_all_user():
     users_list = UserModel.query.order_by(UserModel.user_id).all()
