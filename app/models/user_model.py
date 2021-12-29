@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 @dataclass
 class UserModel(db.Model):
-    id: int
+    user_id: int
     name: str
     email: str
     username: str
@@ -14,7 +14,7 @@ class UserModel(db.Model):
 
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, primary_key=True)
     name = Column(String(150), nullable=False)
     email = Column(String, nullable=False)
     username = Column(String(100), unique=True, nullable=False)

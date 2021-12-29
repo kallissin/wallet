@@ -5,12 +5,12 @@ from dataclasses import dataclass
 
 @dataclass
 class CategoryModel(db.Model):
-    id: int
+    category_id: int
     name: str
     discount: float
 
     __tablename__ = 'categories'
 
-    id = Column(Integer, primary_key=True)
+    category_id = Column(Integer, primary_key=True)
     name = Column(String(150), unique=True, nullable=False)
     discount = Column(Float, nullable=False)
