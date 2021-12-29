@@ -18,7 +18,7 @@ class UserModel(db.Model):
 
     user_id = Column(Integer, primary_key=True)
     name = Column(String(150), nullable=False)
-    email = Column(String, nullable=False)
+    email = Column(String, unique=True, nullable=False)
     username = Column(String(100), unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
     role = Column(String, default='user', nullable=False)
