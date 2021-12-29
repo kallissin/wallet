@@ -13,6 +13,7 @@ class OrderModel(db.Model):
     sold_at: str
     total: float
     customer: CustomerModel
+    cashback_id: int
 
     __tablename__ = 'orders'
 

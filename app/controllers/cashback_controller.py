@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app
 from app.models.order_model import OrderModel
 import requests
 
@@ -34,6 +34,31 @@ def generate_cashback():
 
     url = "https://5efb30ac80d8170016f7613d.mockapi.io/api/mock/Cashback"
 
-    new_data = requests.post(url, payload)
+    if not order.cashback_id:
+        new_data = requests.post(url, payload)
+    else:
+        new_data = requests.put(url + '/' + str(order.cashback_id), payload)
+    new_data = new_data.json()
 
-    return jsonify(new_data.json())
+    id = new_data['id']
+
+    setattr(order, 'cashback_id', id)
+
+    current_app.db.session.add(order)
+    current_app.db.session.commit()
+
+    return jsonify({
+        "id": order.id,
+        "sold_at": order.sold_at,
+        "customer": {
+            "customer_id": order.customer.id,
+            "cpf": order.customer.cpf,
+            "name": order.customer.name
+        },
+        "total": order.total,
+        "itens": order.itens,
+        "cashback": {
+            "cashback_id": int(new_data['id']),
+            "value": float(new_data['cashback'])
+        }
+    })
