@@ -23,3 +23,5 @@ class OrderModel(db.Model):
     customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
 
     customer = relationship('CustomerModel', backref='orders', uselist=False)
+
+    itens = relationship('OrderProductModel', cascade='all, delete-orphan')

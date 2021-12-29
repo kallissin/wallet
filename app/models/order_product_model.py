@@ -15,8 +15,8 @@ class OrderProductModel(db.Model):
     __tablename__ = 'orders_products'
 
     id = Column(Integer, primary_key=True)
-    order_id = Column(Integer, ForeignKey('orders.id'), nullable=False)
-    product_id = Column(Integer, ForeignKey('products.id'), nullable=False)
+    order_id = Column(Integer, ForeignKey('orders.id'))
+    product_id = Column(Integer, ForeignKey('products.id'))
     value = Column(Float, nullable=False)
     qty = Column(Integer, nullable=False)
 
