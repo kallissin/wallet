@@ -7,16 +7,16 @@ from dataclasses import dataclass
 
 @dataclass
 class OrderProductModel(db.Model):
-    id: int
+    register_id: int
     product_id: int
     value: float
     qty: int
 
     __tablename__ = 'orders_products'
 
-    id = Column(Integer, primary_key=True)
-    order_id = Column(Integer, ForeignKey('orders.id'))
-    product_id = Column(Integer, ForeignKey('products.id'))
+    register_id = Column(Integer, primary_key=True)
+    order_id = Column(Integer, ForeignKey('orders.order_id'))
+    product_id = Column(Integer, ForeignKey('products.product_id'))
     value = Column(Float, nullable=False)
     qty = Column(Integer, nullable=False)
 
