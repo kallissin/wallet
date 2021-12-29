@@ -1,4 +1,5 @@
 from flask import jsonify, request, current_app
+from app.exceptions.exc import InvalidValueError
 from app.models.user_model import UserModel
 from flask_jwt_extended import create_access_token
 import datetime
@@ -9,16 +10,18 @@ from http import HTTPStatus
 def create_user():
     data = request.get_json()
 
-    user = UserModel(**data)
+    try:
+        user = UserModel(**data)
 
-    current_app.db.session.add(user)
-    current_app.db.session.commit()
+        current_app.db.session.add(user)
+        current_app.db.session.commit()
 
-    return jsonify(user), HTTPStatus.CREATED
-
+        return jsonify(user), HTTPStatus.CREATED
+    except InvalidValueError as err:
+        return jsonify({"message": str(err)})
 
 def get_all_user():
-    users_list = UserModel.query.order_by(UserModel.id).all()
+    users_list = UserModel.query.order_by(UserModel.user_id).all()
     return jsonify(users_list), HTTPStatus.OK
 
 
