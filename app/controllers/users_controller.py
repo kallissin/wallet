@@ -18,7 +18,10 @@ def create_user():
 
         return jsonify(user), HTTPStatus.CREATED
     except InvalidValueError as err:
-        return jsonify({"message": str(err)})
+        return jsonify({"message": str(err)}), HTTPStatus.BAD_REQUEST
+    except AttributeError:
+        return jsonify({"message": "password must be of type 'str'"}), HTTPStatus.BAD_REQUEST
+
 
 def get_all_user():
     users_list = UserModel.query.order_by(UserModel.user_id).all()

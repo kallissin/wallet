@@ -38,6 +38,6 @@ class UserModel(db.Model):
     @validates('name', 'email', 'username', 'password')
     def validate_type_of_values(self, key, value):
         if type(value) != str:
-            raise InvalidValueError(f"invalid {key}, value must be of type 'str' ")
+            raise InvalidValueError(f"invalid {key}, value must be of type 'str'")
 
         return value
