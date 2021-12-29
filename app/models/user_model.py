@@ -3,6 +3,7 @@ from app.configs.database import db
 from dataclasses import dataclass
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.exceptions.exc import InvalidValueError, InvalidKeyError, RequiredKeyError
+from sqlalchemy.orm import validates
 
 
 @dataclass
@@ -46,3 +47,13 @@ class UserModel(db.Model):
         for key_model in model_required:
             if key_model not in data:
                 raise RequiredKeyError(data)
+    
+    @validates('name', 'email')
+    def formated_values(self, key, value):
+        print(key)
+        if key == 'name':
+            value = value.title()
+        if key == 'email':
+            value = value.lower()
+        
+        return value
