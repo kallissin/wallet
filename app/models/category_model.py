@@ -36,7 +36,7 @@ class CategoryModel(db.Model):
             if key not in data:
                 raise RequiredKeyError(data, cls.model_to_compare)
 
-    @validates('name', 'email')
+    @validates('name')
     def formated_values(self, key, value):
         if key == 'name':
             value = value.lower()
