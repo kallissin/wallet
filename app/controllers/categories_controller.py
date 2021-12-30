@@ -1,17 +1,32 @@
 from flask import request, jsonify, current_app
+from app.exceptions.exc import InvalidKeyError, InvalidValueError, RequiredKeyError
 from app.models.category_model import CategoryModel
 from http import HTTPStatus
+from sqlalchemy.exc import IntegrityError
+from psycopg2.errors import UniqueViolation
 
 
 def create_category():
     data = request.get_json()
+    try:
+        CategoryModel.validate_key_and_value(data)
+        CategoryModel.validate_required_key(data)
 
-    category = CategoryModel(**data)
+        category = CategoryModel(**data)
 
-    current_app.db.session.add(category)
-    current_app.db.session.commit()
+        current_app.db.session.add(category)
+        current_app.db.session.commit()
 
-    return jsonify(category), HTTPStatus.CREATED
+        return jsonify(category), HTTPStatus.CREATED
+    except InvalidValueError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except InvalidKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except RequiredKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except IntegrityError as err:
+        if isinstance(err.orig, UniqueViolation):
+            return jsonify({"message": "name already exists"}), HTTPStatus.CONFLICT
 
 
 def get_all_categories():
