@@ -52,7 +52,7 @@ def create_customer():
     except RequiredKeyError as err:
         return jsonify(err.message), HTTPStatus.BAD_REQUEST
     except IntegrityError as err:
-        if isinstance(err.orig, UniqueViolation):   
+        if isinstance(err.orig, UniqueViolation):
             return jsonify({"message": "cpf already exists"}), HTTPStatus.CONFLICT
     except InvalidTypeCpfError as err:
         return jsonify({"message": str(err)}), HTTPStatus.BAD_REQUEST
@@ -75,13 +75,29 @@ def get_customer_by_id(customer_id):
 
 def update_customer(customer_id):
     data = request.get_json()
+    try:
+        CustomerModel.validate_key_and_value(data)
 
-    customer = CustomerModel.query.filter_by(id=customer_id).first_or_404()
+        if not validate_cpf(data['cpf']):
+            return jsonify({"message": "cpf is not valid"}), HTTPStatus.BAD_REQUEST
 
-    for key, value in data.items():
-        setattr(customer, key, value)
+        customer = CustomerModel.query.filter_by(customer_id=customer_id).first_or_404()
 
-    current_app.db.session.add(customer)
-    current_app.db.session.commit()
+        for key, value in data.items():
+            setattr(customer, key, value)
 
-    return jsonify(customer), HTTPStatus.OK
+        current_app.db.session.add(customer)
+        current_app.db.session.commit()
+
+        return jsonify(customer), HTTPStatus.OK
+    except NotFound:
+        return jsonify({"message": "customer not found"}), HTTPStatus.NOT_FOUND
+    except InvalidKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except InvalidValueError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except IntegrityError as err:
+        if isinstance(err.orig, UniqueViolation):
+            return jsonify({"message": "cpf already exists"}), HTTPStatus.CONFLICT
+    except InvalidTypeCpfError as err:
+        return jsonify({"message": str(err)}), HTTPStatus.BAD_REQUEST
