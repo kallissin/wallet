@@ -53,15 +53,25 @@ def update_user(user_id):
     if 'role' in data:
         return jsonify({"message": "Unauthorized to update role"}), 401
 
-    user = UserModel.query.filter_by(id=user_id).first_or_404()
+    try:
+        user = UserModel.query.filter_by(user_id=user_id).first_or_404()
 
-    for key, value in data.items():
-        setattr(user, key, value)
+        for key, value in data.items():
+            setattr(user, key, value)
 
-    current_app.db.session.add(user)
-    current_app.db.session.commit()
+        current_app.db.session.add(user)
+        current_app.db.session.commit()
 
-    return jsonify(user), HTTPStatus.OK
+        return jsonify(user), HTTPStatus.OK
+    except NotFound:
+        return jsonify({"message": "user not found"}), HTTPStatus.NOT_FOUND
+    except IntegrityError as err:
+        if isinstance(err.orig, UniqueViolation):
+            constraint = str(err.args).split('_')[1]
+            if constraint == 'username':    
+                return jsonify({"message": "username already exists"}), HTTPStatus.CONFLICT
+            if constraint == 'email':
+                return jsonify({"message": "email already exists"}), HTTPStatus.CONFLICT
 
 
 def delete_user(user_id):
