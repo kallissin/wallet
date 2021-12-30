@@ -16,8 +16,12 @@ def validate_cpf(cpf):
 
         for index, value in enumerate(cpf_to_compare):
             total += int(value) * (start - index)
-       
+
         digit = str(total * 10 % 11)
+
+        if digit == 10:
+            digit = 0
+
         cpf_to_compare += digit
 
     if cpf == cpf_to_compare:
@@ -30,7 +34,7 @@ def create_customer():
     try:
         CustomerModel.validate_key_and_value(data)
         CustomerModel.validate_required_key(data)
-        
+
         if not validate_cpf(data['cpf']):
             return jsonify({"message": "cpf is not valid"}), HTTPStatus.BAD_REQUEST
 
