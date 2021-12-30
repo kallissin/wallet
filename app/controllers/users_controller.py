@@ -57,6 +57,9 @@ def update_user(user_id):
         return jsonify({"message": "Unauthorized to update role"}), 401
 
     try:
+        UserModel.validate_key(data)
+        UserModel.validate_value(data)
+
         user = UserModel.query.filter_by(user_id=user_id).first_or_404()
 
         for key, value in data.items():
@@ -68,6 +71,10 @@ def update_user(user_id):
         return jsonify(user), HTTPStatus.OK
     except NotFound:
         return jsonify({"message": "user not found"}), HTTPStatus.NOT_FOUND
+    except InvalidValueError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except InvalidKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
     except IntegrityError as err:
         if isinstance(err.orig, UniqueViolation):
             constraint = str(err.args).split('_')[1]
