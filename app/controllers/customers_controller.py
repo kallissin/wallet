@@ -1,4 +1,5 @@
 from flask import request, jsonify, current_app
+from werkzeug.exceptions import NotFound
 from app.exceptions.exc import InvalidKeyError, InvalidTypeCpfError, InvalidValueError, RequiredKeyError
 from app.models.customer_model import CustomerModel
 from http import HTTPStatus
@@ -58,15 +59,18 @@ def create_customer():
 
 
 def get_all_customer():
-    customers_list = CustomerModel.query.order_by(CustomerModel.id).all()
+    customers_list = CustomerModel.query.order_by(CustomerModel.customer_id).all()
 
     return jsonify(customers_list), HTTPStatus.OK
 
 
 def get_customer_by_id(customer_id):
-    customer = CustomerModel.query.filter_by(id=customer_id).first_or_404()
+    try:
+        customer = CustomerModel.query.filter_by(customer_id=customer_id).first_or_404()
 
-    return jsonify(customer), HTTPStatus.OK
+        return jsonify(customer), HTTPStatus.OK
+    except NotFound:
+        return jsonify({"message": "customer not found"}), HTTPStatus.NOT_FOUND
 
 
 def update_customer(customer_id):
