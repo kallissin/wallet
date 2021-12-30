@@ -1,8 +1,9 @@
 from sqlalchemy import Column, String, Integer
 from app.configs.database import db
 from dataclasses import dataclass
-
-from app.exceptions.exc import InvalidKeyError, InvalidValueError, RequiredKeyError
+from sqlalchemy.orm import validates
+from app.exceptions.exc import InvalidKeyError, InvalidTypeCpfError, InvalidValueError, RequiredKeyError
+import re
 
 
 @dataclass
@@ -35,3 +36,18 @@ class CustomerModel(db.Model):
         for key in cls.model_to_compare:
             if key not in data:
                 raise RequiredKeyError(data, cls.model_to_compare)
+
+    @validates('name')
+    def formated_values(self, key, value):
+        if key == 'name':
+            value = value.title()
+        return value
+
+    @validates('cpf')
+    def validate_format_cpf(self, key, value):
+        regex_cpf = r'^[0-9]{11}$'
+        validate = re.fullmatch(regex_cpf, value)
+     
+        if not validate:
+            raise (InvalidTypeCpfError("cpf must be in format xxxxxxxxxxx"))
+        return value

@@ -26,3 +26,7 @@ class RequiredKeyError(Exception):
             "message": [f"{item} is required" for item in model_to_compare if item not in data]
         }
         super().__init__(self.message)
+
+
+class InvalidTypeCpfError(Exception):
+    ...

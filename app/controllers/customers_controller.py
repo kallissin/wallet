@@ -1,5 +1,5 @@
 from flask import request, jsonify, current_app
-from app.exceptions.exc import InvalidKeyError, InvalidValueError, RequiredKeyError
+from app.exceptions.exc import InvalidKeyError, InvalidTypeCpfError, InvalidValueError, RequiredKeyError
 from app.models.customer_model import CustomerModel
 from http import HTTPStatus
 from sqlalchemy.exc import IntegrityError
@@ -27,7 +27,8 @@ def create_customer():
     except IntegrityError as err:
         if isinstance(err.orig, UniqueViolation):   
             return jsonify({"message": "cpf already exists"}), HTTPStatus.CONFLICT
-
+    except InvalidTypeCpfError as err:
+        return jsonify({"message": str(err)}), HTTPStatus.BAD_REQUEST
 
 def get_all_customer():
     customers_list = CustomerModel.query.order_by(CustomerModel.id).all()
