@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, Float
 from app.configs.database import db
 from dataclasses import dataclass
-
+from sqlalchemy.orm import validates
 from app.exceptions.exc import InvalidKeyError, InvalidValueError, RequiredKeyError
 
 
@@ -35,3 +35,10 @@ class CategoryModel(db.Model):
         for key in cls.model_to_compare:
             if key not in data:
                 raise RequiredKeyError(data, cls.model_to_compare)
+
+    @validates('name', 'email')
+    def formated_values(self, key, value):
+        if key == 'name':
+            value = value.lower()
+
+        return value
