@@ -8,6 +8,7 @@ from http import HTTPStatus
 from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
 
+
 def create_user():
     data = request.get_json()
     try:
@@ -32,14 +33,18 @@ def create_user():
             if constraint == 'email':
                 return jsonify({"message": "email already exists"}), HTTPStatus.CONFLICT
 
+
 def get_all_user():
     users_list = UserModel.query.order_by(UserModel.user_id).all()
     return jsonify(users_list), HTTPStatus.OK
 
 
 def get_user_by_id(user_id):
-    user = UserModel.query.filter_by(id=user_id).first_or_404()
-    return jsonify(user), HTTPStatus.OK
+    try:
+        user = UserModel.query.filter_by(user_id=user_id).first_or_404()
+        return jsonify(user), HTTPStatus.OK
+    except NotFound:
+        return jsonify({"message": "user not found"}), HTTPStatus.NOT_FOUND
 
 
 def update_user(user_id):
