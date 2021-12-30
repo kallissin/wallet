@@ -70,10 +70,10 @@ def update_category(category_id):
 
 
 def delete_category(category_id):
-
-    category = CategoryModel.query.filter_by(id=category_id).first_or_404()
-
-    current_app.db.session.delete(category)
-    current_app.db.session.commit()
-
-    return jsonify(""), HTTPStatus.NO_CONTENT
+    try:
+        category = CategoryModel.query.filter_by(category_id=category_id).first_or_404()
+        current_app.db.session.delete(category)
+        current_app.db.session.commit()
+        return jsonify(""), HTTPStatus.NO_CONTENT
+    except NotFound:
+        return jsonify({"message": "category not found"}), HTTPStatus.NOT_FOUND
