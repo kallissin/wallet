@@ -1,4 +1,5 @@
 from flask import request, jsonify, current_app
+from werkzeug.exceptions import NotFound
 from app.exceptions.exc import InvalidKeyError, InvalidValueError, RequiredKeyError
 from app.models.category_model import CategoryModel
 from http import HTTPStatus
@@ -31,15 +32,17 @@ def create_category():
 
 def get_all_categories():
 
-    list_categories = CategoryModel.query.order_by(CategoryModel.id).all()
+    list_categories = CategoryModel.query.order_by(CategoryModel.category_id).all()
 
     return jsonify(list_categories), HTTPStatus.OK
 
 
 def get_category_by_id(category_id):
-    category = CategoryModel.query.filter_by(id=category_id).first_or_404()
-
-    return jsonify(category), HTTPStatus.OK
+    try:
+        category = CategoryModel.query.filter_by(category_id=category_id).first_or_404()
+        return jsonify(category), HTTPStatus.OK
+    except NotFound:
+        return jsonify({"message": "category not found"}), HTTPStatus.NOT_FOUND
 
 
 def update_category(category_id):
