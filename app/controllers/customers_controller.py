@@ -6,11 +6,33 @@ from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
 
 
+def validate_cpf(cpf):
+    output = False
+    cpf_to_compare = cpf[:-2]
+
+    while len(cpf_to_compare) < 11:
+        start = len(cpf_to_compare) + 1
+        total = 0
+
+        for index, value in enumerate(cpf_to_compare):
+            total += int(value) * (start - index)
+       
+        digit = str(total * 10 % 11)
+        cpf_to_compare += digit
+
+    if cpf == cpf_to_compare:
+        output = True
+    return output
+
+
 def create_customer():
     data = request.get_json()
     try:
         CustomerModel.validate_key_and_value(data)
         CustomerModel.validate_required_key(data)
+        
+        if not validate_cpf(data['cpf']):
+            return jsonify({"message": "cpf is not valid"}), HTTPStatus.BAD_REQUEST
 
         customer = CustomerModel(**data)
 
@@ -29,6 +51,7 @@ def create_customer():
             return jsonify({"message": "cpf already exists"}), HTTPStatus.CONFLICT
     except InvalidTypeCpfError as err:
         return jsonify({"message": str(err)}), HTTPStatus.BAD_REQUEST
+
 
 def get_all_customer():
     customers_list = CustomerModel.query.order_by(CustomerModel.id).all()
