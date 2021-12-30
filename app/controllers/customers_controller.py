@@ -11,6 +11,9 @@ def validate_cpf(cpf):
     output = False
     cpf_to_compare = cpf[:-2]
 
+    if len(set(list(cpf))) == 1:
+        return output
+
     while len(cpf_to_compare) < 11:
         start = len(cpf_to_compare) + 1
         total = 0
