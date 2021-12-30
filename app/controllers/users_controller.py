@@ -12,7 +12,10 @@ from psycopg2.errors import UniqueViolation
 def create_user():
     data = request.get_json()
     try:
-        UserModel.validate_data(data)
+        UserModel.validate_key(data)
+        UserModel.validate_value(data)
+        UserModel.validate_required_key(data)
+
         user = UserModel(**data)
 
         current_app.db.session.add(user)
