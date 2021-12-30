@@ -1,37 +1,28 @@
 class InvalidValueError(Exception):
-    model_value = {
-        "name": str,
-        "email": str,
-        "username": str,
-        "password": str
-    }
 
-    def __init__(self, data):
+    def __init__(self, data, model_to_compare):
         self.message = {
             "status": "error",
-            "message": [f"key {key} must be type 'str'" for key, value in data.items() if type(value) != self.model_value[key]]
+            "message": [f"key {key} must be type {(model_to_compare[key].__name__)}" for key, value in data.items() if type(value) != model_to_compare[key]]
         }
         super().__init__(self.message)
 
 
-
 class InvalidKeyError(Exception):
-    model_key = ['name', 'email', 'username', 'password']
 
-    def __init__(self, data):
+    def __init__(self, data, model_to_compare):
         self.message = {
             "status": "error",
-            "message": [f'key {key} invalid'for key in data.keys() if key not in self.model_key]
+            "message": [f'key {key} invalid'for key in data.keys() if key not in model_to_compare]
         }
         super().__init__(self.message)
 
 
 class RequiredKeyError(Exception):
-    model_required = ['name', 'email', 'username', 'password']
 
-    def __init__(self, data):
+    def __init__(self, data, model_to_compare):
         self.message = {
             "status": "error",
-            "message": [f"{item} is required" for item in self.model_required if item not in data]
+            "message": [f"{item} is required" for item in model_to_compare if item not in data]
         }
         super().__init__(self.message)

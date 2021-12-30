@@ -12,8 +12,7 @@ from psycopg2.errors import UniqueViolation
 def create_user():
     data = request.get_json()
     try:
-        UserModel.validate_key(data)
-        UserModel.validate_value(data)
+        UserModel.validate_key_and_value(data)
         UserModel.validate_required_key(data)
 
         user = UserModel(**data)
@@ -57,8 +56,7 @@ def update_user(user_id):
         return jsonify({"message": "Unauthorized to update role"}), 401
 
     try:
-        UserModel.validate_key(data)
-        UserModel.validate_value(data)
+        UserModel.validate_key_and_value(data)
 
         user = UserModel.query.filter_by(user_id=user_id).first_or_404()
 
@@ -99,8 +97,7 @@ def delete_user(user_id):
 def login():
     data = request.get_json()
     try:
-        UserModel.validate_key(data)
-        UserModel.validate_value(data)
+        UserModel.validate_key_and_value(data)
 
         password = data.pop('password')
 
