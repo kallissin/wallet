@@ -97,7 +97,23 @@ def insert_item(order_id):
 
 
 def get_item_by_id(item_id):
-    ...
+    try:
+        item = OrderProductModel.query.filter_by(register_id=item_id).first_or_404()
+        return jsonify({
+            "item_id": item.register_id,
+            "product": {
+                "product_id": item.product.product_id,
+                "name": item.product.name,
+                "category": {
+                    "category_id": item.product.category.category_id,
+                    "name": item.product.category.name
+                }
+            },
+            "value": item.value,
+            "qty": item.qty
+        }), HTTPStatus.OK
+    except NotFound:
+        return jsonify({"message": "item not found"}), HTTPStatus.NOT_FOUND
 
 
 def get_item_by_order_id(order_id):
