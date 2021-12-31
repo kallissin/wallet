@@ -94,3 +94,7 @@ def insert_item(order_id):
         "value": item.value,
         "qty": item.qty
     } for item in order.itens])
+
+
+def get_item_by_order_id(order_id):
+    ...
