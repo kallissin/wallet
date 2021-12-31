@@ -121,3 +121,7 @@ def delete_order(order_id):
         return jsonify(""), HTTPStatus.NO_CONTENT
     except NotFound:
         return jsonify({"message": "order not found"}), HTTPStatus.NOT_FOUND
+
+
+def delete_item(item_id):
+    ...
