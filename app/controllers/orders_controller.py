@@ -165,3 +165,8 @@ def delete_item(item_id):
         return jsonify(""), HTTPStatus.NO_CONTENT
     except NotFound:
         return jsonify({"message": "item not found"}), HTTPStatus.NOT_FOUND
+
+
+# TODO: implementar a função com as exceções
+def update_item(item_id):
+    ...

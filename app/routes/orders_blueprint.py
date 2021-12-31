@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from app.controllers.orders_controller import create_order, delete_item, delete_order, get_all_itens, get_all_orders, get_item_by_id, get_item_by_order_id, get_order_by_id, insert_item
+from app.controllers.orders_controller import create_order, delete_item, delete_order, get_all_itens, get_all_orders, get_item_by_id, get_item_by_order_id, get_order_by_id, insert_item, update_item
 
 bp = Blueprint('order_bp', __name__, url_prefix='order')
 
@@ -13,3 +13,4 @@ bp.delete('/<int:order_id>')(delete_order)
 bp.delete('/item/<int:item_id>')(delete_item)
 bp.get('/item/<int:item_id>')(get_item_by_id)
 bp.get('/item')(get_all_itens)
+bp.patch('/item/<int:item_id>')(update_item)
