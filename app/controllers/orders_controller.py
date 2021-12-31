@@ -124,4 +124,10 @@ def delete_order(order_id):
 
 
 def delete_item(item_id):
-    ...
+    try:
+        item = OrderProductModel.query.filter_by(register_id=item_id).first_or_404()
+        current_app.db.session.delete(item)
+        current_app.db.session.commit()
+        return jsonify(""), HTTPStatus.NO_CONTENT
+    except NotFound:
+        return jsonify({"message": "item not found"}), HTTPStatus.NOT_FOUND
