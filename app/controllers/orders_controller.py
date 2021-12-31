@@ -93,7 +93,7 @@ def insert_item(order_id):
         },
         "value": item.value,
         "qty": item.qty
-    } for item in order.itens])
+    } for item in order.itens]), HTTPStatus.CREATED
 
 
 def get_item_by_order_id(order_id):
@@ -114,4 +114,10 @@ def get_item_by_order_id(order_id):
 
 
 def delete_order(order_id):
-    ...
+    try:
+        order = OrderModel.query.filter_by(order_id=order_id).first_or_404()
+        current_app.db.session.delete(order)
+        current_app.db.session.commit()
+        return jsonify(""), HTTPStatus.NO_CONTENT
+    except NotFound:
+        return jsonify({"message": "order not found"}), HTTPStatus.NOT_FOUND
