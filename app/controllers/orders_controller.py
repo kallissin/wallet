@@ -96,6 +96,10 @@ def insert_item(order_id):
     } for item in order.itens]), HTTPStatus.CREATED
 
 
+def get_item_by_id(item_id):
+    ...
+
+
 def get_item_by_order_id(order_id):
     try:
         order = OrderModel.query.filter_by(order_id=order_id).first_or_404()
