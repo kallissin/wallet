@@ -8,6 +8,15 @@ from app.models.order_product_model import OrderProductModel
 from app.models.product_model import ProductModel
 
 
+def calculate_total_amount(order):
+    total = 0
+    for item in order.itens:
+        value_per_item = item.value * item.qty
+    total += value_per_item
+    setattr(order, 'total', total)
+    return order
+
+
 def create_order():
     data = request.get_json()
     try:
@@ -71,10 +80,12 @@ def insert_item(order_id):
         return jsonify({"message": "Item already exists"}), HTTPStatus.CONFLICT
 
     order.itens.append(item)
+    order = calculate_total_amount(order)
+    current_app.db.session.add(order)
     current_app.db.session.commit()
 
     return jsonify([{
-        "order_id": item.order_id,
+        "item_id": item.register_id,
         "product": {
             "product_id": item.product.product_id,
             "name": item.product.name,
