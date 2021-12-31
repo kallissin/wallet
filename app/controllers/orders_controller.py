@@ -117,7 +117,17 @@ def get_item_by_id(item_id):
 
 
 def get_all_itens():
-    ...
+    list_itens = OrderProductModel.query.order_by(OrderProductModel.register_id).all()
+    return jsonify([{
+        "item_id": item.register_id,
+        "product": {
+            "product_id": item.product.product_id,
+            "name": item.product.name,
+            "category": item.product.category.name
+        },
+        "value": item.value,
+        "qty": item.qty
+    } for item in list_itens]), HTTPStatus.OK
 
 
 def get_item_by_order_id(order_id):
