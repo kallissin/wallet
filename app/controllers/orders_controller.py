@@ -111,3 +111,7 @@ def get_item_by_order_id(order_id):
         } for item in order.itens])
     except NotFound:
         return jsonify({"message": "order not found"}), HTTPStatus.NOT_FOUND
+
+
+def delete_order(order_id):
+    ...
