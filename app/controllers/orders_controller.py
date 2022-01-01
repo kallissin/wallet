@@ -9,11 +9,10 @@ from app.models.product_model import ProductModel
 
 
 def calculate_total_amount(order):
-    total = 0
+    value_per_item = 0
     for item in order.itens:
-        value_per_item = item.value * item.qty
-    total += value_per_item
-    setattr(order, 'total', total)
+        value_per_item += item.value * item.qty
+    setattr(order, 'total', value_per_item)
     return order
 
 
