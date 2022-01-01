@@ -41,7 +41,19 @@ def create_order():
 
 def get_all_orders():
     list_orders = OrderModel.query.order_by(OrderModel.order_id).all()
-    return jsonify(list_orders)
+    return jsonify([{
+        "order_id": order.order_id,
+        "sold_at": order.sold_at,
+        "customer": order.customer,
+        "total": order.total,
+        "itens": [{
+            "register_id": item.register_id,
+            "product": item.product.name,
+            "value": item.value,
+            "qty": item.qty
+        } for item in order.itens],
+        "cashback_id": order.cashback_id
+    } for order in list_orders])
 
 
 def get_order_by_id(order_id):
