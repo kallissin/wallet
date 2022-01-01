@@ -169,4 +169,41 @@ def delete_item(item_id):
 
 # TODO: implementar a função com as exceções
 def update_item(item_id):
-    ...
+    data = request.get_json()
+
+    try:
+        item = OrderProductModel.query.filter_by(register_id=item_id).first_or_404()
+    except NotFound:
+        return jsonify({"message": "item not found"}), HTTPStatus.NOT_FOUND
+
+    try:
+        OrderProductModel.validate_key_and_value(data)
+        OrderProductModel.validate_required_key(data)
+        product_name = data.pop('name')
+        product = ProductModel.query.filter_by(name=product_name).first_or_404()
+        setattr(item, 'product', product)
+        for key, value in data.items():
+            setattr(item, key, value)
+        current_app.db.session.add(item)
+        current_app.db.session.commit()
+        return jsonify({
+            "item_id": item.register_id,
+            "product": {
+                "product_id": item.product.product_id,
+                "name": item.product.name,
+                "category": {
+                    "category_id": item.product.category.category_id,
+                    "name": item.product.category.name
+                }
+            },
+            "value": item.value,
+            "qty": item.qty
+        }), HTTPStatus.OK
+    except NotFound:
+        return jsonify({"message": "product not found"}), HTTPStatus.NOT_FOUND
+    except InvalidValueError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except InvalidKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except RequiredKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
