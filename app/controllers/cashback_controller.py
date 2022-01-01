@@ -4,7 +4,7 @@ import requests
 
 
 def calculate_discount(value, discount):
-    return value * discount
+    return round(value * discount, 2)
 
 
 def calculate_cashback(itens):
@@ -25,7 +25,7 @@ def calculate_cashback(itens):
 def generate_cashback():
     data = request.get_json()
 
-    order = OrderModel.query.filter_by(id=data['order_id']).first_or_404()
+    order = OrderModel.query.filter_by(order_id=data['order_id']).first_or_404()
 
     payload = {
         'cashback': calculate_cashback(order.itens),
@@ -40,7 +40,7 @@ def generate_cashback():
         new_data = requests.put(url + '/' + str(order.cashback_id), payload)
     new_data = new_data.json()
 
-    id = new_data['id']
+    id = int(new_data['id'])
 
     setattr(order, 'cashback_id', id)
 
@@ -48,17 +48,18 @@ def generate_cashback():
     current_app.db.session.commit()
 
     return jsonify({
-        "id": order.id,
+       "order_id": order.order_id,
         "sold_at": order.sold_at,
-        "customer": {
-            "customer_id": order.customer.id,
-            "cpf": order.customer.cpf,
-            "name": order.customer.name
-        },
+        "customer": order.customer,
         "total": order.total,
-        "itens": order.itens,
+        "itens": [{
+            "register_id": item.register_id,
+            "product": item.product.name,
+            "value": item.value,
+            "qty": item.qty
+        } for item in order.itens],
         "cashback": {
-            "cashback_id": int(new_data['id']),
+            "cashback_id": order.cashback_id,
             "value": float(new_data['cashback'])
         }
     })
