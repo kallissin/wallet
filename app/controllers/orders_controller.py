@@ -8,6 +8,7 @@ from app.models.order_product_model import OrderProductModel
 from app.models.product_model import ProductModel
 import requests
 
+
 def calculate_total_amount(order):
     value_per_item = 0
     for item in order.itens:
@@ -58,7 +59,18 @@ def get_all_orders():
 def get_order_by_id(order_id):
     try:
         order = OrderModel.query.filter_by(order_id=order_id).first_or_404()
-        return jsonify(order)
+        return jsonify({
+            "order_id": order.order_id,
+            "sold_at": order.sold_at,
+            "customer": order.customer,
+            "total": order.total,
+            "itens": [{
+                "register_id": item.register_id,
+                "product": item.product.name,
+                "value": item.value,
+                "qty": item.qty
+            } for item in order.itens],
+            "cashback_id": order.cashback_id})
     except NotFound:
         return jsonify({"message": "order not found"}), HTTPStatus.NOT_FOUND
 
