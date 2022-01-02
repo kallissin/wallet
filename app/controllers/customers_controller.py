@@ -1,4 +1,5 @@
 from flask import request, jsonify, current_app
+from flask_jwt_extended.view_decorators import jwt_required
 from werkzeug.exceptions import NotFound
 from app.exceptions.exc import InvalidKeyError, InvalidTypeCpfError, InvalidValueError, RequiredKeyError
 from app.models.customer_model import CustomerModel
@@ -33,6 +34,7 @@ def validate_cpf(cpf):
     return output
 
 
+@jwt_required()
 def create_customer():
     data = request.get_json()
     try:
@@ -61,12 +63,14 @@ def create_customer():
         return jsonify({"message": str(err)}), HTTPStatus.BAD_REQUEST
 
 
+@jwt_required()
 def get_all_customer():
     customers_list = CustomerModel.query.order_by(CustomerModel.customer_id).all()
 
     return jsonify(customers_list), HTTPStatus.OK
 
 
+@jwt_required()
 def get_customer_by_id(customer_id):
     try:
         customer = CustomerModel.query.filter_by(customer_id=customer_id).first_or_404()
@@ -76,6 +80,7 @@ def get_customer_by_id(customer_id):
         return jsonify({"message": "customer not found"}), HTTPStatus.NOT_FOUND
 
 
+@jwt_required()
 def update_customer(customer_id):
     data = request.get_json()
     try:

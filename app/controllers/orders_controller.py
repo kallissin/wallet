@@ -7,6 +7,7 @@ from app.models.customer_model import CustomerModel
 from app.models.order_product_model import OrderProductModel
 from app.models.product_model import ProductModel
 import requests
+from flask_jwt_extended import jwt_required
 
 
 def calculate_total_amount(order):
@@ -17,6 +18,7 @@ def calculate_total_amount(order):
     return order
 
 
+@jwt_required()
 def create_order():
     data = request.get_json()
     try:
@@ -39,6 +41,7 @@ def create_order():
         return jsonify({"message": "customer not found"}), HTTPStatus.NOT_FOUND
 
 
+@jwt_required()
 def get_all_orders():
     list_orders = OrderModel.query.order_by(OrderModel.order_id).all()
     return jsonify([{
@@ -56,6 +59,7 @@ def get_all_orders():
     } for order in list_orders])
 
 
+@jwt_required()
 def get_order_by_id(order_id):
     try:
         order = OrderModel.query.filter_by(order_id=order_id).first_or_404()
@@ -75,6 +79,7 @@ def get_order_by_id(order_id):
         return jsonify({"message": "order not found"}), HTTPStatus.NOT_FOUND
 
 
+@jwt_required()
 def insert_item(order_id):
     data = request.get_json()
 
@@ -119,6 +124,7 @@ def insert_item(order_id):
     } for item in order.itens]), HTTPStatus.CREATED
 
 
+@jwt_required()
 def get_item_by_id(item_id):
     try:
         item = OrderProductModel.query.filter_by(register_id=item_id).first_or_404()
@@ -139,6 +145,7 @@ def get_item_by_id(item_id):
         return jsonify({"message": "item not found"}), HTTPStatus.NOT_FOUND
 
 
+@jwt_required()
 def get_all_itens():
     list_itens = OrderProductModel.query.order_by(OrderProductModel.register_id).all()
     return jsonify([{
@@ -153,6 +160,7 @@ def get_all_itens():
     } for item in list_itens]), HTTPStatus.OK
 
 
+@jwt_required()
 def get_item_by_order_id(order_id):
     try:
         order = OrderModel.query.filter_by(order_id=order_id).first_or_404()
@@ -170,6 +178,7 @@ def get_item_by_order_id(order_id):
         return jsonify({"message": "order not found"}), HTTPStatus.NOT_FOUND
 
 
+@jwt_required()
 def delete_order(order_id):
     try:
         order = OrderModel.query.filter_by(order_id=order_id).first_or_404()
@@ -182,6 +191,7 @@ def delete_order(order_id):
         return jsonify({"message": "order not found"}), HTTPStatus.NOT_FOUND
 
 
+@jwt_required()
 def delete_item(item_id):
     try:
         item = OrderProductModel.query.filter_by(register_id=item_id).first_or_404()
@@ -197,6 +207,7 @@ def delete_item(item_id):
 
 
 # TODO: implementar a função com as exceções
+@jwt_required()
 def update_item(item_id):
     data = request.get_json()
 

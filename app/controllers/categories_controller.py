@@ -1,4 +1,5 @@
 from flask import request, jsonify, current_app
+from flask_jwt_extended.view_decorators import jwt_required
 from werkzeug.exceptions import NotFound
 from app.exceptions.exc import InvalidKeyError, InvalidValueError, RequiredKeyError
 from app.models.category_model import CategoryModel
@@ -7,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
 
 
+@jwt_required()
 def create_category():
     data = request.get_json()
     try:
@@ -30,6 +32,7 @@ def create_category():
             return jsonify({"message": "name already exists"}), HTTPStatus.CONFLICT
 
 
+@jwt_required()
 def get_all_categories():
 
     list_categories = CategoryModel.query.order_by(CategoryModel.category_id).all()
@@ -37,6 +40,7 @@ def get_all_categories():
     return jsonify(list_categories), HTTPStatus.OK
 
 
+@jwt_required()
 def get_category_by_id(category_id):
     try:
         category = CategoryModel.query.filter_by(category_id=category_id).first_or_404()
@@ -45,6 +49,7 @@ def get_category_by_id(category_id):
         return jsonify({"message": "category not found"}), HTTPStatus.NOT_FOUND
 
 
+@jwt_required()
 def update_category(category_id):
     data = request.get_json()
     try:
@@ -69,6 +74,7 @@ def update_category(category_id):
             return jsonify({"message": "name already exists"}), HTTPStatus.CONFLICT
 
 
+@jwt_required()
 def delete_category(category_id):
     try:
         category = CategoryModel.query.filter_by(category_id=category_id).first_or_404()

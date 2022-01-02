@@ -1,7 +1,7 @@
 from flask import jsonify, request, current_app
 from app.exceptions.exc import InvalidValueError, InvalidKeyError, RequiredKeyError
 from app.models.user_model import UserModel
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required
 import datetime
 from werkzeug.exceptions import NotFound
 from http import HTTPStatus
@@ -36,11 +36,13 @@ def create_user():
                 return jsonify({"message": "email already exists"}), HTTPStatus.CONFLICT
 
 
+@jwt_required()
 def get_all_user():
     users_list = UserModel.query.order_by(UserModel.user_id).all()
     return jsonify(users_list), HTTPStatus.OK
 
 
+@jwt_required()
 def get_user_by_id(user_id):
     try:
         user = UserModel.query.filter_by(user_id=user_id).first_or_404()
@@ -49,6 +51,7 @@ def get_user_by_id(user_id):
         return jsonify({"message": "user not found"}), HTTPStatus.NOT_FOUND
 
 # TODO: criar validação para atualizar os dados somente se for o mesmo id ou admin
+@jwt_required()
 def update_user(user_id):
     data = request.get_json()
 
@@ -82,6 +85,7 @@ def update_user(user_id):
                 return jsonify({"message": "email already exists"}), HTTPStatus.CONFLICT
 
 
+@jwt_required()
 def delete_user(user_id):
     try:
         user = UserModel.query.filter_by(user_id=user_id).first_or_404()
