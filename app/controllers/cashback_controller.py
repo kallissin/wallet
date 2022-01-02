@@ -49,7 +49,7 @@ def generate_cashback():
     current_app.db.session.commit()
 
     return jsonify({
-       "order_id": order.order_id,
+        "order_id": order.order_id,
         "sold_at": order.sold_at,
         "customer": order.customer,
         "total": order.total,
