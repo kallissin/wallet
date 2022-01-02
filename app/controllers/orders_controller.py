@@ -162,8 +162,7 @@ def delete_order(order_id):
     try:
         order = OrderModel.query.filter_by(order_id=order_id).first_or_404()
         if order.cashback_id:
-            cashback = requests.delete(f"https://5efb30ac80d8170016f7613d.mockapi.io/api/mock/Cashback/{order.cashback_id}")
-        print(cashback.text)
+            requests.delete(f"https://5efb30ac80d8170016f7613d.mockapi.io/api/mock/Cashback/{order.cashback_id}")
         current_app.db.session.delete(order)
         current_app.db.session.commit()
         return jsonify(""), HTTPStatus.NO_CONTENT
@@ -174,7 +173,11 @@ def delete_order(order_id):
 def delete_item(item_id):
     try:
         item = OrderProductModel.query.filter_by(register_id=item_id).first_or_404()
+        order = OrderModel.query.filter_by(order_id=item.order_id).first_or_404()
         current_app.db.session.delete(item)
+        current_app.db.session.commit()
+        order = calculate_total_amount(order)
+        current_app.db.session.add(order)
         current_app.db.session.commit()
         return jsonify(""), HTTPStatus.NO_CONTENT
     except NotFound:
