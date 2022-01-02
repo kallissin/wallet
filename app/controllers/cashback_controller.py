@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from flask import request, jsonify, current_app
 from app.models.order_model import OrderModel
 import requests
@@ -66,4 +67,9 @@ def generate_cashback():
 
 
 def get_cashback_by_id(cashback_id):
-    ...
+    url = "https://5efb30ac80d8170016f7613d.mockapi.io/api/mock/Cashback"
+    data = requests.get(url + '/' + cashback_id)
+    data = data.json()
+    if 'id' in data:
+        return jsonify(data), HTTPStatus.OK
+    return jsonify({"message": "cashback not found"}), HTTPStatus.NOT_FOUND

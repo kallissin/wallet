@@ -5,4 +5,4 @@ from app.controllers.cashback_controller import generate_cashback, get_cashback_
 bp = Blueprint('cashback_bp', __name__, url_prefix='/cashback')
 
 bp.post('')(generate_cashback)
-bp.get('/<int:cashback_id>')(get_cashback_by_id)
+bp.get('/<string:cashback_id>')(get_cashback_by_id)
