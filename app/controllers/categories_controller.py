@@ -6,8 +6,10 @@ from app.models.category_model import CategoryModel
 from http import HTTPStatus
 from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
+from app.utils.permission import permission_role
 
 
+@permission_role(('admin',))
 @jwt_required()
 def create_category():
     data = request.get_json()
@@ -49,6 +51,7 @@ def get_category_by_id(category_id):
         return jsonify({"message": "category not found"}), HTTPStatus.NOT_FOUND
 
 
+@permission_role(('admin',))
 @jwt_required()
 def update_category(category_id):
     data = request.get_json()
@@ -74,6 +77,7 @@ def update_category(category_id):
             return jsonify({"message": "name already exists"}), HTTPStatus.CONFLICT
 
 
+@permission_role(('admin',))
 @jwt_required()
 def delete_category(category_id):
     try:

@@ -7,6 +7,7 @@ from werkzeug.exceptions import NotFound
 from http import HTTPStatus
 from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
+from app.utils.permission import permission_role
 
 
 def create_user():
@@ -36,12 +37,14 @@ def create_user():
                 return jsonify({"message": "email already exists"}), HTTPStatus.CONFLICT
 
 
+@permission_role(('admin',))
 @jwt_required()
 def get_all_user():
     users_list = UserModel.query.order_by(UserModel.user_id).all()
     return jsonify(users_list), HTTPStatus.OK
 
 
+@permission_role(('admin',))
 @jwt_required()
 def get_user_by_id(user_id):
     try:
@@ -85,6 +88,7 @@ def update_user(user_id):
                 return jsonify({"message": "email already exists"}), HTTPStatus.CONFLICT
 
 
+@permission_role(('admin',))
 @jwt_required()
 def delete_user(user_id):
     try:
