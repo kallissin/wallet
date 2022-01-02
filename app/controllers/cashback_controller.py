@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from flask import request, jsonify, current_app
+from flask_jwt_extended.view_decorators import jwt_required
 from werkzeug.exceptions import NotFound
 from app.models.order_model import OrderModel
 import requests
@@ -24,6 +25,7 @@ def calculate_cashback(itens):
     return total_cashback_amount
 
 
+@jwt_required()
 def generate_cashback():
     data = request.get_json()
     try:
@@ -71,6 +73,7 @@ def generate_cashback():
         return jsonify({"message": "order not found"}), HTTPStatus.NOT_FOUND
 
 
+@jwt_required()
 def get_cashback_by_id(cashback_id):
     url = "https://5efb30ac80d8170016f7613d.mockapi.io/api/mock/Cashback"
     data = requests.get(url + '/' + cashback_id)

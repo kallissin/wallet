@@ -6,8 +6,10 @@ from app.models.product_model import ProductModel
 from werkzeug.exceptions import NotFound
 from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
+from flask_jwt_extended import jwt_required
 
 
+@jwt_required()
 def create_product():
     try:
         data = request.get_json()
@@ -39,11 +41,13 @@ def create_product():
             return jsonify({"message": "name already exists"}), HTTPStatus.CONFLICT
 
 
+@jwt_required()
 def get_all_products():
     list_products = ProductModel.query.order_by(ProductModel.product_id).all()
     return jsonify(list_products), HTTPStatus.OK
 
 
+@jwt_required()
 def get_product_by_id(product_id):
     try:
         product = ProductModel.query.filter_by(product_id=product_id).first_or_404()
@@ -52,6 +56,7 @@ def get_product_by_id(product_id):
         return jsonify({"message": "product not found"}), HTTPStatus.NOT_FOUND
 
 
+@jwt_required()
 def update_product(product_id):
     data = request.get_json()
 
@@ -84,6 +89,7 @@ def update_product(product_id):
         return jsonify({"message": "product not found"}), HTTPStatus.NOT_FOUND
 
 
+@jwt_required()
 def delete_product(product_id):
     try:
         product = ProductModel.query.filter_by(product_id=product_id).first_or_404()

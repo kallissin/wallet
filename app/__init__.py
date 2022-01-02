@@ -1,6 +1,7 @@
 from flask import Flask
 from app.configs import env_configs, database, migration, auth
 from app import routes
+from app.controllers import commands
 
 
 def create_app():
@@ -10,5 +11,5 @@ def create_app():
     migration.init_app(app)
     auth.init_app(app)
     routes.init_app(app)
-
+    commands.init_app(app)
     return app
