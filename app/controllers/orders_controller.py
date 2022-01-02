@@ -6,7 +6,7 @@ from app.models.order_model import OrderModel
 from app.models.customer_model import CustomerModel
 from app.models.order_product_model import OrderProductModel
 from app.models.product_model import ProductModel
-
+import requests
 
 def calculate_total_amount(order):
     value_per_item = 0
@@ -161,6 +161,9 @@ def get_item_by_order_id(order_id):
 def delete_order(order_id):
     try:
         order = OrderModel.query.filter_by(order_id=order_id).first_or_404()
+        if order.cashback_id:
+            cashback = requests.delete(f"https://5efb30ac80d8170016f7613d.mockapi.io/api/mock/Cashback/{order.cashback_id}")
+        print(cashback.text)
         current_app.db.session.delete(order)
         current_app.db.session.commit()
         return jsonify(""), HTTPStatus.NO_CONTENT
@@ -195,7 +198,9 @@ def update_item(item_id):
         setattr(item, 'product', product)
         for key, value in data.items():
             setattr(item, key, value)
-        current_app.db.session.add(item)
+        order = OrderModel.query.filter_by(order_id=item.order_id).first_or_404()
+        order = calculate_total_amount(order)
+        current_app.db.session.add(order)
         current_app.db.session.commit()
         return jsonify({
             "item_id": item.register_id,
