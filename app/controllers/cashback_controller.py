@@ -63,3 +63,7 @@ def generate_cashback():
             "value": float(new_data['cashback'])
         }
     })
+
+
+def get_cashback_by_id(cashback_id):
+    ...
