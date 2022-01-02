@@ -1,10 +1,12 @@
+from http import HTTPStatus
 from flask import request, jsonify, current_app
+from werkzeug.exceptions import NotFound
 from app.models.order_model import OrderModel
 import requests
 
 
 def calculate_discount(value, discount):
-    return value * discount
+    return round(value * discount, 2)
 
 
 def calculate_cashback(itens):
@@ -24,41 +26,55 @@ def calculate_cashback(itens):
 
 def generate_cashback():
     data = request.get_json()
+    try:
+        order = OrderModel.query.filter_by(order_id=data['order_id']).first_or_404()
 
-    order = OrderModel.query.filter_by(id=data['order_id']).first_or_404()
-
-    payload = {
-        'cashback': calculate_cashback(order.itens),
-        'document': order.customer.cpf
-    }
-
-    url = "https://5efb30ac80d8170016f7613d.mockapi.io/api/mock/Cashback"
-
-    if not order.cashback_id:
-        new_data = requests.post(url, payload)
-    else:
-        new_data = requests.put(url + '/' + str(order.cashback_id), payload)
-    new_data = new_data.json()
-
-    id = new_data['id']
-
-    setattr(order, 'cashback_id', id)
-
-    current_app.db.session.add(order)
-    current_app.db.session.commit()
-
-    return jsonify({
-        "id": order.id,
-        "sold_at": order.sold_at,
-        "customer": {
-            "customer_id": order.customer.id,
-            "cpf": order.customer.cpf,
-            "name": order.customer.name
-        },
-        "total": order.total,
-        "itens": order.itens,
-        "cashback": {
-            "cashback_id": int(new_data['id']),
-            "value": float(new_data['cashback'])
+        payload = {
+            'cashback': calculate_cashback(order.itens),
+            'document': order.customer.cpf
         }
-    })
+
+        url = "https://5efb30ac80d8170016f7613d.mockapi.io/api/mock/Cashback"
+
+        if not order.cashback_id:
+            new_data = requests.post(url, payload)
+        else:
+            new_data = requests.put(url + '/' + str(order.cashback_id), payload)
+        new_data = new_data.json()
+
+        if 'id' in new_data:
+            id = int(new_data['id'])
+
+            setattr(order, 'cashback_id', id)
+
+            current_app.db.session.add(order)
+            current_app.db.session.commit()
+
+            return jsonify({
+                "order_id": order.order_id,
+                "sold_at": order.sold_at,
+                "customer": order.customer,
+                "total": order.total,
+                "itens": [{
+                    "register_id": item.register_id,
+                    "product": item.product.name,
+                    "value": item.value,
+                    "qty": item.qty
+                } for item in order.itens],
+                "cashback": {
+                    "cashback_id": order.cashback_id,
+                    "value": float(new_data['cashback'])
+                }
+            })
+        return jsonify({"message": new_data}), HTTPStatus.NOT_FOUND
+    except NotFound:
+        return jsonify({"message": "order not found"}), HTTPStatus.NOT_FOUND
+
+
+def get_cashback_by_id(cashback_id):
+    url = "https://5efb30ac80d8170016f7613d.mockapi.io/api/mock/Cashback"
+    data = requests.get(url + '/' + cashback_id)
+    data = data.json()
+    if 'id' in data:
+        return jsonify(data), HTTPStatus.OK
+    return jsonify({"message": "cashback not found"}), HTTPStatus.NOT_FOUND

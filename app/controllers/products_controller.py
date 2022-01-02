@@ -1,56 +1,96 @@
 from flask import request, jsonify, current_app
 from http import HTTPStatus
+from app.exceptions.exc import InvalidKeyError, InvalidValueError, RequiredKeyError
 from app.models.category_model import CategoryModel
 from app.models.product_model import ProductModel
+from werkzeug.exceptions import NotFound
+from sqlalchemy.exc import IntegrityError
+from psycopg2.errors import UniqueViolation
 
 
 def create_product():
-    data = request.get_json()
-    category = data.pop('category')
+    try:
+        data = request.get_json()
 
-    category = CategoryModel.query.filter_by(name=category).first_or_404()
+        ProductModel.validate_key_and_value(data)
+        ProductModel.validate_required_key(data)
 
-    data['category_id'] = category.id
+        category = data.pop('category')
+        category = CategoryModel.query.filter_by(name=category).first_or_404()
 
-    product = ProductModel(**data)
+        data['category_id'] = category.category_id
 
-    current_app.db.session.add(product)
-    current_app.db.session.commit()
+        product = ProductModel(**data)
 
-    return jsonify(product), HTTPStatus.CREATED
+        current_app.db.session.add(product)
+        current_app.db.session.commit()
+
+        return jsonify(product), HTTPStatus.CREATED
+    except NotFound:
+        return jsonify({"message": "category not found"}), HTTPStatus.NOT_FOUND
+    except InvalidValueError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except InvalidKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except RequiredKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except IntegrityError as err:
+        if isinstance(err.orig, UniqueViolation):
+            return jsonify({"message": "name already exists"}), HTTPStatus.CONFLICT
 
 
 def get_all_products():
-    list_products = ProductModel.query.order_by(ProductModel.id).all()
-
+    list_products = ProductModel.query.order_by(ProductModel.product_id).all()
     return jsonify(list_products), HTTPStatus.OK
 
 
 def get_product_by_id(product_id):
-    product = ProductModel.query.filter_by(id=product_id).first_or_404()
-
-    return jsonify(product), HTTPStatus.OK
+    try:
+        product = ProductModel.query.filter_by(product_id=product_id).first_or_404()
+        return jsonify(product), HTTPStatus.OK
+    except NotFound:
+        return jsonify({"message": "product not found"}), HTTPStatus.NOT_FOUND
 
 
 def update_product(product_id):
     data = request.get_json()
 
-    product = ProductModel.query.filter_by(id=product_id).first_or_404()
+    try:
+        ProductModel.validate_key_and_value(data)
+    except InvalidValueError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except InvalidKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
 
-    for key, value in data.items():
-        setattr(product, key, value)
+    if 'category' in data:
+        try:
+            category = data.pop('category').lower()
+            category = CategoryModel.query.filter_by(name=category).first_or_404()
+            data['category_id'] = category.category_id
+        except NotFound:
+            return jsonify({"message": "category not found"}), HTTPStatus.NOT_FOUND
 
-    current_app.db.session.add(product)
-    current_app.db.session.commit()
+    try:
+        product = ProductModel.query.filter_by(product_id=product_id).first_or_404()
 
-    return jsonify(product), HTTPStatus.OK
+        for key, value in data.items():
+            setattr(product, key, value)
+
+        current_app.db.session.add(product)
+        current_app.db.session.commit()
+
+        return jsonify(product), HTTPStatus.OK
+    except NotFound:
+        return jsonify({"message": "product not found"}), HTTPStatus.NOT_FOUND
 
 
 def delete_product(product_id):
+    try:
+        product = ProductModel.query.filter_by(product_id=product_id).first_or_404()
 
-    product = ProductModel.query.filter_by(id=product_id).first_or_404()
+        current_app.db.session.delete(product)
+        current_app.db.session.commit()
 
-    current_app.db.session.delete(product)
-    current_app.db.session.commit()
-
-    return jsonify(""), HTTPStatus.NO_CONTENT
+        return jsonify(""), HTTPStatus.NO_CONTENT
+    except NotFound:
+        return jsonify({"message": "product not found"}), HTTPStatus.NOT_FOUND
