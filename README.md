@@ -26,8 +26,26 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
                     <li>visualizar/deletar usuários</li>
                 </ul>
             </li>
-        </ul>
-    </li>
+            <li>
+              <a href='#cadastrando-um-usuario'>Cadastrando um usuário</a>
+            </li>
+            <li>
+              <a href='#login-de-usuario'>Login de usuário</a>
+            </li>
+            <li>
+              <a href='#listando-todos-os-usuarios'>Listando todos os usuários</a>
+            </li>
+            <li>
+              <a href='#listando-um-usuario-especifico'>Listando um usuário específico</a>
+            </li>
+            <li>
+              <a href='#atualizando-um-usuario'>Atualizando um usuário</a>
+            </li>
+            <li>
+              <a href='#deletando-um-usuario'>Deletando um usuário</a>
+            </li>
+              </ul>
+          </li>
     <li>
         <a href='#customer'>Customer:</a>
         <ul>
@@ -75,7 +93,7 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 ## User:
 
-### **Cadastrando um Usuário**
+### **Cadastrando um usuario**
 
 ---
 
@@ -171,7 +189,7 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 <br>
 
-### **Login de Usuário**
+### **Login de usuario**
 
 <p>Rota responsável pelo login do "usuário". Retorna um token de acesso, para que o usuário consiga utilizar os end points</p>
 
@@ -196,11 +214,57 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 }
 ```
 
+### **Possíveis erros**
+
+---
+
+<p>
+    caso enviar o valor com o tipo diferente
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key password must be type str"]
+}
+```
+
+<p>
+    caso enviar um campo que não existe
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key teste invalid"]
+}
+```
+
+<p>
+   se enviar a senha errada 
+<p>
+
+```json
+{
+  "message": "password incorrect"
+}
+```
+
+<p>
+    se enviar o username que não existe no banco de dados
+</p>
+
+```json
+{
+  "message": "user not found"
+}
+```
+
 <br>
 
-### Listando todos os usuários
+### **Listando todos os usuarios**
 
-<p>Rota responsável por listar todos os usuários cadastrados</p>
+<p>Rota responsável por listar todos os usuários cadastrados. Obs: precisa ser um usuário com role "admin" para fazer essa requisição</p>
 
 > Authorization: Bearer {token}
 
@@ -227,4 +291,150 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
     "role": "admin"
   }
 ]
+```
+
+<br>
+
+### **Listando um usuario especifico**
+
+<p>Rota responsável por listar um usuário específico. Obs: precisa ser um usuário com role "admin" para fazer essa requisição</p>
+
+> Authorization: Bearer {token}
+
+|     **url**     | **method** |    **status**     |
+| :-------------: | :--------: | :---------------: |
+| `/user/user_id` |   `GET`    | `200 - 403 - 404` |
+
+**RESPONSE**
+
+```json
+{
+  "user_id": 1,
+  "name": "kelvin cantarino",
+  "email": "kelvin123@email.com",
+  "username": "kelvinc",
+  "role": "user"
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+    caso não encotre o usuário especificado
+</p>
+
+```json
+{
+  "message": "user not found"
+}
+```
+
+<p>
+    se não for um usuário admin
+</p>
+
+```json
+{
+  "msg": "Unauthorized for this user scope"
+}
+```
+
+### **Atualizando um usuario**
+
+<p>
+    Nesta rota é possível atualizar os dados de um usuário, porem, só pode atualizar as informações se for admin ou se for o perfil do usuário que fez a requisição. Não é possível atualizar as informações de outros usuários.
+</p>
+
+> Authorization: Bearer {token}
+
+|     **url**     | **method** |          **status**           |
+| :-------------: | :--------: | :---------------------------: |
+| `/user/user_id` |   `PTCH`   | `200 - 400 - 401 - 404 - 409` |
+
+**RESPONSE**
+
+```json
+{
+  "user_id": 1,
+  "name": "kelvin cantarino",
+  "email": "kelvin123@email.com",
+  "username": "kelvinc",
+  "role": "user"
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+    caso tente alterar o campo "role" para admin
+</p>
+
+```json
+{
+  "message": "Unauthorized to update role"
+}
+```
+
+<p>
+    caso tente atualizar o email e este dado já pertencer a algum usuário
+</p>
+
+```json
+{
+  "message": "email already exists"
+}
+```
+
+<p>
+    caso tente atualizar o username e este dado já pertencer a algum usuário
+</p>
+
+```json
+{
+  "message": "username already exists"
+}
+```
+
+### **Deletando um usuario**
+
+<p>
+    Esta rota é para deletar um usuário da aplicação. Obs: para deletar é necessário ser "admin". 
+</p>
+
+> Authorization: Bearer {token}
+
+|     **url**     | **method** |    **status**     |
+| :-------------: | :--------: | :---------------: |
+| `/user/user_id` |  `delete`  | `204 - 403 - 404` |
+
+**RESPONSE**
+
+> No content
+
+### **Possíveis erros**
+
+---
+
+<p>
+  caso o usuário não seja um admin
+</p>
+
+```json
+{
+  "msg": "Unauthorized for this user scope"
+}
+```
+
+<p>
+  se o usuário não for encontrado
+</p>
+
+```json
+{
+  "message": "user not found"
+}
 ```
