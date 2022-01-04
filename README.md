@@ -52,6 +52,18 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
             <li>
                 É cadastrado no sistema por um usuário. O objetivo de ter um cliente é para associar as orders de compra a ele. Sendo assim, é possível visualizar todas as orders de um cliente específico
             </li>
+            <li>
+              <a href='#cadastrando-um-cliente'>Cadastrando um cliente</a>
+            </li>
+            <li>
+              <a href='#listando-todos-os-clientes'>Listando todos os clientes</a>
+            </li>
+            <li>
+              <a href='#listando-um-cliente-especifico'>Listando um cliente específico</a>
+            </li>
+            <li>
+              <a href='#atualizando-um-cliente'>Atualizando um cliente</a>
+            </li>
         </ul>
     </li>
     <li>
@@ -90,6 +102,8 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
         </ul>
     </li>
 </ol>
+
+<br>
 
 ## User:
 
@@ -191,6 +205,8 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 ### **Login de usuario**
 
+---
+
 <p>Rota responsável pelo login do "usuário". Retorna um token de acesso, para que o usuário consiga utilizar os end points</p>
 
 |    **url**    | **method** |       **status**        |
@@ -264,6 +280,8 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 ### **Listando todos os usuarios**
 
+---
+
 <p>Rota responsável por listar todos os usuários cadastrados. Obs: precisa ser um usuário com role "admin" para fazer essa requisição</p>
 
 > Authorization: Bearer {token}
@@ -296,6 +314,8 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 <br>
 
 ### **Listando um usuario especifico**
+
+---
 
 <p>Rota responsável por listar um usuário específico. Obs: precisa ser um usuário com role "admin" para fazer essa requisição</p>
 
@@ -341,7 +361,11 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 }
 ```
 
+<br>
+
 ### **Atualizando um usuario**
+
+---
 
 <p>
     Nesta rota é possível atualizar os dados de um usuário, porem, só pode atualizar as informações se for admin ou se for o perfil do usuário que fez a requisição. Não é possível atualizar as informações de outros usuários.
@@ -399,7 +423,11 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 }
 ```
 
+<br>
+
 ### **Deletando um usuario**
+
+---
 
 <p>
     Esta rota é para deletar um usuário da aplicação. Obs: para deletar é necessário ser "admin". 
@@ -409,7 +437,7 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 |     **url**     | **method** |    **status**     |
 | :-------------: | :--------: | :---------------: |
-| `/user/user_id` |  `delete`  | `204 - 403 - 404` |
+| `/user/user_id` |  `DELETE`  | `204 - 403 - 404` |
 
 **RESPONSE**
 
@@ -436,5 +464,258 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 ```json
 {
   "message": "user not found"
+}
+```
+
+<br>
+
+## Customer
+
+### **Cadastrando um cliente**
+
+---
+
+<p>
+  Esta rota é responsável por cadastrar um cliente
+</p>
+
+> Authorization: Bearer {token}
+
+|   **url**   | **method** |    **status**     |
+| :---------: | :--------: | :---------------: |
+| `/customer` |   `POST`   | `201 - 400 - 409` |
+
+**BODY**
+
+```json
+{
+  "name": "Flavio Reis",
+  "cpf": "25579585063"
+}
+```
+
+**RESPONSE**
+
+```json
+{
+  "customer_id": 3,
+  "cpf": "25579585063",
+  "name": "flavio reis"
+}
+```
+
+<br>
+
+### **Possíveis erros**
+
+---
+
+<p>
+  cpf precisa estar no formato xxxxxxxxxxx, se caso enviar o cpf em outro formato, receberá o seguinte erro
+</p>
+
+```json
+{
+  "message": "cpf must be in format xxxxxxxxxxx"
+}
+```
+
+<p> 
+  se adicionar um cpf que já esta sendo utilizado por outro usuário, receberá o seguinte erro
+</p>
+
+```json
+{
+  "message": "cpf already exists"
+}
+```
+
+<p>
+  se digitar um cpf que não é válido, exemplo: 11111111111. Receberá o seguinte erro
+<p>
+
+```json
+{
+  "message": "cpf is not valid"
+}
+```
+
+<p>
+  se digitar algum valor em outro formato, receberá o seguinte erro
+<p>
+
+```json
+{
+  "status": "error",
+  "message": ["key cpf must be type str"]
+}
+```
+
+<p>
+  se caso não enviar os campos necessário para cadastrar um cliente voce receberá um erro, com o campo requerido
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["cpf is required"]
+}
+```
+
+<br>
+
+### **Listando todos os clientes**
+
+---
+
+<p>
+  Essa rota é responsável por listar todos os clientes que foram cadastrados
+</p>
+
+> Authorization: Bearer {token}
+
+|   **url**   | **method** | **status** |
+| :---------: | :--------: | :--------: |
+| `/customer` |   `GET`    |   `200`    |
+
+**RESPONSE**
+
+```json
+[
+  {
+    "customer_id": 1,
+    "cpf": "70208421009",
+    "name": "eduardo oliveira carrijo"
+  },
+  {
+    "customer_id": 2,
+    "cpf": "24041985051",
+    "name": "silvana oliveira"
+  },
+  {
+    "customer_id": 3,
+    "cpf": "25579585063",
+    "name": "flavio reis"
+  }
+]
+```
+
+<br>
+
+### **Listando um cliente especifico**
+
+---
+
+<p>
+  Essa rota é responsável por listar um cliente específico que foi cadastrado
+</p>
+
+> Authorization: Bearer {token}
+
+|         **url**         | **method** |    **status**     |
+| :---------------------: | :--------: | :---------------: |
+| `/customer/customer_id` |   `GET`    | `200 - 403 - 404` |
+
+**RESPONSE**
+
+```json
+{
+  "customer_id": 3,
+  "cpf": "25579585063",
+  "name": "flavio reis"
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+    caso não encotre o cliente especificado
+</p>
+
+```json
+{
+  "message": "customer not found"
+}
+```
+
+<br>
+
+### **Atualizando um cliente**
+
+---
+
+<p> 
+  Essa rota é responsável por atualizar um cliente
+</p>
+
+> Authorization: Bearer {token}
+
+|     **url**     | **method** |       **status**        |
+| :-------------: | :--------: | :---------------------: |
+| `/user/user_id` |   `PTCH`   | `200 - 400 - 404 - 409` |
+
+**BODY**
+
+```json
+{
+  "name": "flavio reis moreira",
+  "cpf": "25579585063"
+}
+```
+
+**RESPONSE**
+
+```json
+{
+  "customer_id": 3,
+  "cpf": "25579585063",
+  "name": "flavio reis moreira"
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  cpf precisa estar no formato xxxxxxxxxxx, se caso enviar o cpf em outro formato, receberá o seguinte erro
+</p>
+
+```json
+{
+  "message": "cpf must be in format xxxxxxxxxxx"
+}
+```
+
+<p> 
+  se adicionar um cpf que já esta sendo utilizado por outro usuário, receberá o seguinte erro
+</p>
+
+```json
+{
+  "message": "cpf already exists"
+}
+```
+
+<p>
+  se digitar um cpf que não é válido, exemplo: 11111111111. Receberá o seguinte erro
+<p>
+
+```json
+{
+  "message": "cpf is not valid"
+}
+```
+
+<p>
+  se digitar algum valor em outro formato, receberá o seguinte erro
+<p>
+
+```json
+{
+  "status": "error",
+  "message": ["key cpf must be type str"]
 }
 ```
