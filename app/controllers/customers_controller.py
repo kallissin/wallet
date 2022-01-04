@@ -21,13 +21,12 @@ def validate_cpf(cpf):
 
         for index, value in enumerate(cpf_to_compare):
             total += int(value) * (start - index)
-
-        digit = str(total * 10 % 11)
+        digit = total * 10 % 11
 
         if digit == 10:
             digit = 0
 
-        cpf_to_compare += digit
+        cpf_to_compare += str(digit)
 
     if cpf == cpf_to_compare:
         output = True
@@ -84,6 +83,7 @@ def get_customer_by_id(customer_id):
 def update_customer(customer_id):
     data = request.get_json()
     try:
+        CustomerModel(**data)
         CustomerModel.validate_key_and_value(data)
 
         if not validate_cpf(data['cpf']):
