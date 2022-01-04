@@ -40,10 +40,10 @@ def create_customer():
         CustomerModel.validate_key_and_value(data)
         CustomerModel.validate_required_key(data)
 
+        customer = CustomerModel(**data)
+
         if not validate_cpf(data['cpf']):
             return jsonify({"message": "cpf is not valid"}), HTTPStatus.BAD_REQUEST
-
-        customer = CustomerModel(**data)
 
         current_app.db.session.add(customer)
         current_app.db.session.commit()
@@ -83,11 +83,12 @@ def get_customer_by_id(customer_id):
 def update_customer(customer_id):
     data = request.get_json()
     try:
-        CustomerModel(**data)
         CustomerModel.validate_key_and_value(data)
+        CustomerModel(**data)
 
-        if not validate_cpf(data['cpf']):
-            return jsonify({"message": "cpf is not valid"}), HTTPStatus.BAD_REQUEST
+        if 'cpf' in data:
+            if not validate_cpf(data['cpf']):
+                return jsonify({"message": "cpf is not valid"}), HTTPStatus.BAD_REQUEST
 
         customer = CustomerModel.query.filter_by(customer_id=customer_id).first_or_404()
 
