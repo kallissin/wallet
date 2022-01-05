@@ -72,6 +72,21 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
             <li>
                 É utilizada para associar um produto a ela. Com base na categoria que é calculado o desconto do produto.
             </li>
+            <li>
+              <a href='#criando-uma-categoria'>Criando uma categoria</a>
+            </li>
+            <li>
+              <a href='#listando-todas-as-categorias'>Listando todas as categorias</a>
+            </li>
+            <li>
+              <a href='#listando-uma-categoria-especifica'>Listando uma categoria específica</a>
+            </li>
+            <li>
+              <a href='#atualizando-uma-categoria'>Atualizando uma categoria</a>
+            </li>
+            <li>
+              <a href='#deletando-uma-categoria'>Deletando uma categoria</a>
+            </li>
         </ul>
     </li>
     <li>
@@ -612,9 +627,9 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 > Authorization: Bearer {token}
 
-|         **url**         | **method** |    **status**     |
-| :---------------------: | :--------: | :---------------: |
-| `/customer/customer_id` |   `GET`    | `200 - 403 - 404` |
+|         **url**         | **method** | **status**  |
+| :---------------------: | :--------: | :---------: |
+| `/customer/customer_id` |   `GET`    | `200 - 404` |
 
 **RESPONSE**
 
@@ -652,9 +667,9 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 > Authorization: Bearer {token}
 
-|     **url**     | **method** |       **status**        |
-| :-------------: | :--------: | :---------------------: |
-| `/user/user_id` |   `PTCH`   | `200 - 400 - 404 - 409` |
+|         **url**         | **method** |       **status**        |
+| :---------------------: | :--------: | :---------------------: |
+| `/customer/customer_id` |   `PTCH`   | `200 - 400 - 404 - 409` |
 
 **BODY**
 
@@ -717,5 +732,304 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 {
   "status": "error",
   "message": ["key cpf must be type str"]
+}
+```
+
+<br>
+
+## Category:
+
+### **Criando uma categoria**
+
+---
+
+<p>
+  Rota responsável por criar uma categoria, o valor do campo discount tem que ser em decimal para representar o disconto. Exemplo: 5% seria 5 / 100 o que resultaria em 0,05, logo o valor de discount seria 0.05 . Obs: Somente usuário "admin" consegue criar uma categoria.
+</p>
+
+> Authorization: Bearer {token}
+
+|   **url**   | **method** |       **status**        |
+| :---------: | :--------: | :---------------------: |
+| `/category` |   `POST`   | `201 - 400 - 403 - 409` |
+
+**BODY**
+
+```json
+{
+  "name": "alimentos",
+  "discount": 0.05
+}
+```
+
+**RESPONSE**
+
+```json
+{
+  "category_id": 2,
+  "name": "alimentos",
+  "discount": 0.05
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  Se caso digitar um valor do tipo inteiro no campo discount, voce receberá o seguinte erro informando que o valor precisa ser do tipo flutuante
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key discount must be type float"]
+}
+```
+
+<p>
+  Se caso esquecer de digitar algum campo, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["discount is required"]
+}
+```
+
+<p>
+  Se digitar um campo que não existe, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key teste invalid"]
+}
+```
+
+<p>
+  Se caso existir o nome para a categoria, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "message": "name already exists"
+}
+```
+
+<p>
+    se não for um usuário admin
+</p>
+
+```json
+{
+  "msg": "Unauthorized for this user scope"
+}
+```
+
+<br>
+
+### **Listando todas as categorias**
+
+---
+
+<p>
+  Essa rota é responsável por renderizar todas as categorias que foram cadastradas pelo usuário admin
+</p>
+
+> Authorization: Bearer {token}
+
+|   **url**   | **method** | **status** |
+| :---------: | :--------: | :--------: |
+| `/category` |   `GET`    |   `200`    |
+
+**RESPONSE**
+
+```json
+[
+  {
+    "category_id": 1,
+    "name": "bebidas",
+    "discount": 0.07
+  },
+  {
+    "category_id": 2,
+    "name": "alimentos",
+    "discount": 0.05
+  }
+]
+```
+
+<br>
+
+### **Listando uma categoria especifica**
+
+---
+
+<p>
+  Essa rota é responsável por renderizar uma categoria especifica
+</p>
+
+> Authorization: Bearer {token}
+
+|         **url**         | **method** | **status**  |
+| :---------------------: | :--------: | :---------: |
+| `/category/category_by` |   `GET`    | `200 - 404` |
+
+**RESPONSE**
+
+```json
+{
+  "category_id": 2,
+  "name": "alimentos",
+  "discount": 0.05
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  Se não encontrar nenhuma categoria, receberá o seguinte erro
+</p>
+
+```json
+{
+  "message": "category not found"
+}
+```
+
+<br>
+
+### **Atualizando uma categoria**
+
+<p>
+  Rota responsável por atualizar uma categoria. Obs: somente usuário "admin" pode atualizar uma categoria
+</p>
+
+> Authorization: Bearer {token}
+
+|         **url**         | **method** |          **status**           |
+| :---------------------: | :--------: | :---------------------------: |
+| `/category/category_by` |  `PATCH`   | `200 - 400 - 403 - 404 - 409` |
+
+**BODY**
+
+```json
+{
+  "discount": 0.1
+}
+```
+
+**RESPONSE**
+
+```json
+{
+  "category_id": 2,
+  "name": "alimentos",
+  "discount": 0.1
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  Se caso digitar um valor do tipo inteiro no campo discount, voce receberá o seguinte erro informando que o valor precisa ser do tipo flutuante
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key discount must be type float"]
+}
+```
+
+<p>
+  Se digitar um campo que não existe, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key teste invalid"]
+}
+```
+
+<p>
+  Se caso existir o nome para a categoria, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "message": "name already exists"
+}
+```
+
+<p>
+    se não for um usuário admin
+</p>
+
+```json
+{
+  "msg": "Unauthorized for this user scope"
+}
+```
+
+<br>
+
+### **Deletando uma categoria**
+
+---
+
+<p>
+  Rota responsável por deletar uma categoria. Obs: Somente um usuário "admin" pode deletar uma categoria
+</p>
+
+> Authorization: Bearer {token}
+
+|         **url**         | **method** |       **status**        |
+| :---------------------: | :--------: | :---------------------: |
+| `/category/category_by` |  `DELETE`  | `204 - 403 - 404 - 409` |
+
+**RESPONSE**
+
+> No content
+
+### **Possíveis erros**
+
+---
+
+<p>
+  Se não encontrar a categoria, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "message": "category not found"
+}
+```
+
+<p>
+    se não for um usuário admin
+</p>
+
+```json
+{
+  "msg": "Unauthorized for this user scope"
+}
+```
+
+<p>
+  se caso a categoria estiver sido relacionada a algum produto, então não poderá excluíla, e receberá a seguinte mensagem de erro
+</P>
+
+```json
+{
+  "message": "there are products registered with this category"
 }
 ```
