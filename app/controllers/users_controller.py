@@ -1,7 +1,7 @@
 from flask import jsonify, request, current_app
 from app.exceptions.exc import InvalidValueError, InvalidKeyError, RequiredKeyError
 from app.models.user_model import UserModel
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import datetime
 from werkzeug.exceptions import NotFound
 from http import HTTPStatus
@@ -31,7 +31,7 @@ def create_user():
     except IntegrityError as err:
         if isinstance(err.orig, UniqueViolation):
             constraint = str(err.args).split('_')[1]
-            if constraint == 'username':    
+            if constraint == 'username':
                 return jsonify({"message": "username already exists"}), HTTPStatus.CONFLICT
             if constraint == 'email':
                 return jsonify({"message": "email already exists"}), HTTPStatus.CONFLICT
@@ -53,13 +53,19 @@ def get_user_by_id(user_id):
     except NotFound:
         return jsonify({"message": "user not found"}), HTTPStatus.NOT_FOUND
 
+
 # TODO: criar validação para atualizar os dados somente se for o mesmo id ou admin
 @jwt_required()
 def update_user(user_id):
     data = request.get_json()
+    user = get_jwt_identity()
+
+    if user['user_id'] != user_id:
+        if user['role'] != 'admin':
+            return jsonify({"message": "Unauthorized to update user"}), HTTPStatus.FORBIDDEN
 
     if 'role' in data:
-        return jsonify({"message": "Unauthorized to update role"}), 401
+        return jsonify({"message": "Unauthorized to update role"}), 403
 
     try:
         UserModel.validate_key_and_value(data)
@@ -106,7 +112,7 @@ def login():
     data = request.get_json()
     try:
         UserModel.validate_key_and_value(data)
-
+        UserModel.validate_login(data)
         password = data.pop('password')
 
         user: UserModel = UserModel.query.filter_by(username=data['username']).first_or_404()
@@ -120,4 +126,6 @@ def login():
     except InvalidValueError as err:
         return jsonify(err.message), HTTPStatus.BAD_REQUEST
     except InvalidKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except RequiredKeyError as err:
         return jsonify(err.message), HTTPStatus.BAD_REQUEST
