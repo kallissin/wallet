@@ -2080,6 +2080,8 @@ se enviar um campo que não existe
   Esta rota tem por objetivo gerar cashback para um pedido de compra de um cliente. Obs: se caso adicionar um novo item ao pedido, será necessário gerar um novo cashback para atualizar o valor de desconto para o cliente.
 </p>
 
+> Authorization: Bearer {token}
+
 |   **url**   | **method** |  **status**  |
 | :---------: | :--------: | :----------: |
 | `/cashback` |   `POST`   | ` 201 - 404` |
@@ -2101,7 +2103,7 @@ se enviar um campo que não existe
   "customer": {
     "customer_id": 3,
     "cpf": "25579585063",
-    "name": "Flavio Reis"
+    "name": "flavio reis"
   },
   "total": 54.48,
   "itens": [
@@ -2154,6 +2156,12 @@ se enviar um campo que não existe
 <p>
   Essa rota tem por objetivo, listar as informações do cashback específico que foi gerado para um cliente
 </p>
+
+> Authorization: Bearer {token}
+
+|   **url**   | **method** |  **status**  |
+| :---------: | :--------: | :----------: |
+| `/cashback` |   `GET`    | ` 200 - 404` |
 
 **RESPONSE**
 
