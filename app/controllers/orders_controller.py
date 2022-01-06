@@ -1,7 +1,7 @@
 from flask import request, jsonify, current_app
 from http import HTTPStatus
 from werkzeug.exceptions import NotFound
-from app.exceptions.exc import InvalidKeyError, InvalidValueError, RequiredKeyError
+from app.exceptions.exc import InvalidKeyError, InvalidTypeCpfError, InvalidValueError, RequiredKeyError
 from app.models.order_model import OrderModel
 from app.models.customer_model import CustomerModel
 from app.models.order_product_model import OrderProductModel
@@ -14,7 +14,7 @@ def calculate_total_amount(order):
     value_per_item = 0
     for item in order.itens:
         value_per_item += item.value * item.qty
-    setattr(order, 'total', value_per_item)
+    setattr(order, 'total', round(value_per_item, 2))
     return order
 
 
@@ -24,6 +24,7 @@ def create_order():
     try:
         OrderModel.validate_key_and_value(data)
         OrderModel.validate_required_key(data)
+        CustomerModel(**data)
         customer = CustomerModel.query.filter_by(cpf=data['cpf']).first_or_404()
         order = OrderModel(customer_id=customer.customer_id)
 
@@ -39,6 +40,8 @@ def create_order():
         return jsonify(err.message), HTTPStatus.BAD_REQUEST
     except NotFound:
         return jsonify({"message": "customer not found"}), HTTPStatus.NOT_FOUND
+    except InvalidTypeCpfError as err:
+        return jsonify({"message": str(err)}), HTTPStatus.BAD_REQUEST
 
 
 @jwt_required()
@@ -97,31 +100,35 @@ def insert_item(order_id):
         return jsonify(err.message), HTTPStatus.BAD_REQUEST
     except RequiredKeyError as err:
         return jsonify(err.message), HTTPStatus.BAD_REQUEST
-    order = OrderModel.query.filter_by(order_id=order_id).first_or_404()
-    existing_item = False
 
-    for item_order in order.itens:
-        if product_name == item_order.product.name:
-            existing_item = True
+    try:
+        order = OrderModel.query.filter_by(order_id=order_id).first_or_404()
+        existing_item = False
 
-    if existing_item:
-        return jsonify({"message": "Item already exists"}), HTTPStatus.CONFLICT
+        for item_order in order.itens:
+            if product_name == item_order.product.name:
+                existing_item = True
 
-    order.itens.append(item)
-    order = calculate_total_amount(order)
-    current_app.db.session.add(order)
-    current_app.db.session.commit()
+        if existing_item:
+            return jsonify({"message": "Item already exists"}), HTTPStatus.CONFLICT
 
-    return jsonify([{
-        "item_id": item.register_id,
-        "product": {
-            "product_id": item.product.product_id,
-            "name": item.product.name,
-            "category": item.product.category.name
-        },
-        "value": item.value,
-        "qty": item.qty
-    } for item in order.itens]), HTTPStatus.CREATED
+        order.itens.append(item)
+        order = calculate_total_amount(order)
+        current_app.db.session.add(order)
+        current_app.db.session.commit()
+
+        return jsonify([{
+            "item_id": item.register_id,
+            "product": {
+                "product_id": item.product.product_id,
+                "name": item.product.name,
+                "category": item.product.category.name
+            },
+            "value": item.value,
+            "qty": item.qty
+        } for item in order.itens]), HTTPStatus.CREATED
+    except NotFound:
+        return jsonify({"message": "order not found"}), HTTPStatus.NOT_FOUND
 
 
 @jwt_required()
