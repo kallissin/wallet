@@ -58,8 +58,8 @@ class UserModel(db.Model):
     @validates('name', 'email')
     def formated_values(self, key, value):
         if key == 'name':
-            value = value.title()
+            value = value.lower()
         if key == 'email':
             value = value.lower()
-      
+
         return value

@@ -40,14 +40,14 @@ class CustomerModel(db.Model):
     @validates('name')
     def formated_values(self, key, value):
         if key == 'name':
-            value = value.title()
+            value = value.lower()
         return value
 
     @validates('cpf')
     def validate_format_cpf(self, key, value):
         regex_cpf = r'^[0-9]{11}$'
         validate = re.fullmatch(regex_cpf, value)
-     
+
         if not validate:
             raise (InvalidTypeCpfError("cpf must be in format xxxxxxxxxxx"))
         return value
