@@ -1,7 +1,7 @@
 from flask import jsonify, request, current_app
 from app.exceptions.exc import InvalidValueError, InvalidKeyError, RequiredKeyError
 from app.models.user_model import UserModel
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import datetime
 from werkzeug.exceptions import NotFound
 from http import HTTPStatus
@@ -53,13 +53,19 @@ def get_user_by_id(user_id):
     except NotFound:
         return jsonify({"message": "user not found"}), HTTPStatus.NOT_FOUND
 
+
 # TODO: criar validação para atualizar os dados somente se for o mesmo id ou admin
 @jwt_required()
 def update_user(user_id):
     data = request.get_json()
+    user = get_jwt_identity()
+
+    if user['user_id'] != user_id:
+        if user['role'] != 'admin':
+            return jsonify({"message": "Unauthorized to update user"}), HTTPStatus.FORBIDDEN
 
     if 'role' in data:
-        return jsonify({"message": "Unauthorized to update role"}), 401
+        return jsonify({"message": "Unauthorized to update role"}), 403
 
     try:
         UserModel.validate_key_and_value(data)
