@@ -72,21 +72,6 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
             <li>
                 É utilizada para associar um produto a ela. Com base na categoria que é calculado o desconto do produto.
             </li>
-            <li>
-              <a href='#criando-uma-categoria'>Criando uma categoria</a>
-            </li>
-            <li>
-              <a href='#listando-todas-as-categorias'>Listando todas as categorias</a>
-            </li>
-            <li>
-              <a href='#listando-uma-categoria-especifica'>Listando uma categoria específica</a>
-            </li>
-            <li>
-              <a href='#atualizando-uma-categoria'>Atualizando uma categoria</a>
-            </li>
-            <li>
-              <a href='#deletando-uma-categoria'>Deletando uma categoria</a>
-            </li>
         </ul>
     </li>
     <li>
@@ -642,9 +627,9 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 > Authorization: Bearer {token}
 
-|         **url**         | **method** | **status**  |
-| :---------------------: | :--------: | :---------: |
-| `/customer/customer_id` |   `GET`    | `200 - 404` |
+|         **url**         | **method** |    **status**     |
+| :---------------------: | :--------: | :---------------: |
+| `/customer/customer_id` |   `GET`    | `200 - 403 - 404` |
 
 **RESPONSE**
 
@@ -682,9 +667,9 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 > Authorization: Bearer {token}
 
-|         **url**         | **method** |       **status**        |
-| :---------------------: | :--------: | :---------------------: |
-| `/customer/customer_id` |   `PTCH`   | `200 - 400 - 404 - 409` |
+|     **url**     | **method** |       **status**        |
+| :-------------: | :--------: | :---------------------: |
+| `/user/user_id` |   `PTCH`   | `200 - 400 - 404 - 409` |
 
 **BODY**
 
