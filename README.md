@@ -98,6 +98,26 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
         </ul>
     </li>
     <li>
+      <a href='#order'>Order:</a>
+      <ul>
+        <li>
+          Representa uma solicitação de compra do cliente, ou seja, o cliente pode ter várias solicitações contendo vários itens que é representado por produtos, quantidade e valores. Dessa forma fica mais fácil identificar o que o cliente comprou e visualizar o cashback gerado para aquela solicitação.
+        </li>
+        <li>
+          <a href='#criando-um-pedido'>Criando um pedido</a>
+        </li>
+        <li>
+          <a href='#listando-todos-os-pedidos'>Listando todos os pedidos</a>
+        </li>
+        <li>
+          <a href='#listando-um-pedido-especifico'>Listando um pedido específico</a>
+        </li>
+        <li>
+          <a href='#deletando-um-pedido'>Deletando um pedido</a>
+        </li>
+      </ul>
+    </li>
+    <li>
         <a href='#itens'>Itens:</a>
         <ul>
             <li>
@@ -876,7 +896,7 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 |         **url**         | **method** | **status**  |
 | :---------------------: | :--------: | :---------: |
-| `/category/category_by` |   `GET`    | `200 - 404` |
+| `/category/category_id` |   `GET`    | `200 - 404` |
 
 **RESPONSE**
 
@@ -914,7 +934,7 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 |         **url**         | **method** |          **status**           |
 | :---------------------: | :--------: | :---------------------------: |
-| `/category/category_by` |  `PATCH`   | `200 - 400 - 403 - 404 - 409` |
+| `/category/category_id` |  `PATCH`   | `200 - 400 - 403 - 404 - 409` |
 
 **BODY**
 
@@ -994,7 +1014,7 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 |         **url**         | **method** |       **status**        |
 | :---------------------: | :--------: | :---------------------: |
-| `/category/category_by` |  `DELETE`  | `204 - 403 - 404 - 409` |
+| `/category/category_id` |  `DELETE`  | `204 - 403 - 404 - 409` |
 
 **RESPONSE**
 
@@ -1319,5 +1339,229 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 ```json
 {
   "message": "product not found"
+}
+```
+
+<br>
+
+## **ORDER**
+
+### **Criando um pedido**
+
+---
+
+<p>
+  Rota responsável por criar um pedido de compra de um usuário, para isso é necessário enviar o cpf do cliente em que voce deseja efetuar o pedido. Obs: O valor do campo <i>sold_at</i> foi adicionado como datetime.utcnow() para que a data possa ser convertido e visualizado de acordo com o local da pessoa que esta visualizando a ordem.
+</p>
+
+> Authorization: Bearer {token}
+
+| **url**  | **method** |    **status**     |
+| :------: | :--------: | :---------------: |
+| `/order` |   `POST`   | `201 - 400 - 404` |
+
+**BODY**
+
+```json
+{
+  "cpf": "25579585063"
+}
+```
+
+**RESPONSE**
+
+```json
+{
+  "order_id": 3,
+  "sold_at": "Thu, 06 Jan 2022 11:40:49 GMT",
+  "total": null,
+  "customer": {
+    "customer_id": 3,
+    "cpf": "25579585063",
+    "name": "flavio reis"
+  },
+  "cashback_id": null
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  se caso não tiver cadastrado o cliente, voce irá receber uma mensagem de erro
+</p>
+
+```json
+{
+  "message": "customer not found"
+}
+```
+
+<p>
+  se caso enviar o cpf com o tipo errado voce receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key cpf must be type str"]
+}
+```
+
+<p>
+  se caso enviar o cpf no formato errado receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "message": "cpf must be in format xxxxxxxxxxx"
+}
+```
+
+<p>
+  se caso enviar um campo que não existe, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key cpf1 invalid"]
+}
+```
+
+<br>
+
+### **Listando todos os pedidos**
+
+---
+
+<p>
+  essa rota é responsável por listar todos os pedidos de clientes
+</p>
+
+> Authorization: Bearer {token}
+
+| **url**  | **method** | **status** |
+| :------: | :--------: | :--------: |
+| `/order` |   `GET`    |   `200`    |
+
+**RESPONSE**
+
+```json
+[
+  {
+    "order_id": 1,
+    "sold_at": "Thu, 06 Jan 2022 11:40:49 GMT",
+    "customer": {
+      "customer_id": 11,
+      "cpf": "56975797056",
+      "name": "maria fernanda"
+    },
+    "total": null,
+    "itens": [],
+    "cashback_id": null
+  },
+  {
+    "order_id": 2,
+    "sold_at": "Thu, 06 Jan 2022 12:31:18 GMT",
+    "customer": {
+      "customer_id": 3,
+      "cpf": "25579585063",
+      "name": "flavio reis"
+    },
+    "total": null,
+    "itens": [],
+    "cashback_id": null
+  },
+  {
+    "order_id": 3,
+    "sold_at": "Thu, 06 Jan 2022 12:31:18 GMT",
+    "customer": {
+      "customer_id": 3,
+      "cpf": "25579585063",
+      "name": "flavio reis"
+    },
+    "total": null,
+    "itens": [],
+    "cashback_id": null
+  }
+]
+```
+
+<br>
+
+### **Listando um pedido especifico**
+
+---
+
+<p>
+  Esta rota tem por objetivo listar um pedido específico
+</p>
+
+> Authorization: Bearer {token}
+
+|      **url**      | **method** | **status**  |
+| :---------------: | :--------: | :---------: |
+| `/order/order_id` |   `GET`    | `200 - 404` |
+
+**RESPONSE**
+
+```json
+{
+  "order_id": 3,
+  "sold_at": "Thu, 06 Jan 2022 12:31:18 GMT",
+  "customer": {
+    "customer_id": 3,
+    "cpf": "25579585063",
+    "name": "Flavio Reis"
+  },
+  "total": null,
+  "itens": [],
+  "cashback_id": null
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  caso não encontrar o pedido, será retornado uma mensagem de erro
+</p>
+
+```json
+{
+  "message": "order not found"
+}
+```
+
+<br>
+
+### **Deletando um pedido**
+
+---
+
+> Authorization: Bearer {token}
+
+|      **url**      | **method** | **status**  |
+| :---------------: | :--------: | :---------: |
+| `/order/order_id` |  `DELETE`  | `204 - 404` |
+
+**RESPONSE**
+
+> No content
+
+### **Possíveis erros**
+
+---
+
+<p>
+  se caso não encontrar o pedido, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "message": "order not found"
 }
 ```
