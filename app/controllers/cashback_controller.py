@@ -67,7 +67,7 @@ def generate_cashback():
                     "cashback_id": order.cashback_id,
                     "value": float(new_data['cashback'])
                 }
-            })
+            }), HTTPStatus.CREATED
         return jsonify({"message": new_data}), HTTPStatus.NOT_FOUND
     except NotFound:
         return jsonify({"message": "order not found"}), HTTPStatus.NOT_FOUND

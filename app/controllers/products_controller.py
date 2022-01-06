@@ -87,6 +87,9 @@ def update_product(product_id):
         return jsonify(product), HTTPStatus.OK
     except NotFound:
         return jsonify({"message": "product not found"}), HTTPStatus.NOT_FOUND
+    except IntegrityError as err:
+        if isinstance(err.orig, UniqueViolation):
+            return jsonify({"message": "name already exists"}), HTTPStatus.CONFLICT
 
 
 @jwt_required()

@@ -5,7 +5,7 @@ from app.exceptions.exc import InvalidKeyError, InvalidValueError, RequiredKeyEr
 from app.models.category_model import CategoryModel
 from http import HTTPStatus
 from sqlalchemy.exc import IntegrityError
-from psycopg2.errors import UniqueViolation
+from psycopg2.errors import UniqueViolation, NotNullViolation
 from app.utils.permission import permission_role
 
 
@@ -87,3 +87,6 @@ def delete_category(category_id):
         return jsonify(""), HTTPStatus.NO_CONTENT
     except NotFound:
         return jsonify({"message": "category not found"}), HTTPStatus.NOT_FOUND
+    except IntegrityError as err:
+        if isinstance(err.orig, NotNullViolation):
+            return jsonify({"message": "there are products registered with this category"}), HTTPStatus.CONFLICT
