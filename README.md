@@ -126,6 +126,24 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
             <li>
                 Achei melhor colocar a quantidade e valores associado a um item e não a um produto, tendo em vista que um produto pode alterar o seu valor constantemente, isso iria gerar mais trabalho para o usuário que atua em uma empresa de grande porte.
             </li>
+            <li>
+              <a href='#adicionando-item-a-um-pedido'>Adicionando item a um pedido</a>
+            </li>
+            <li>
+              <a href='#listando-todos-os-itens'>Listando todos os itens</a>
+            </li>
+            <li>
+              <a href='#listando-um-item-especifico'>Listando um item especifico</a>
+            </li>
+            <li>
+              <a href='#listando-todos-os-itens-de-um-pedido'>Listando todos os itens de um pedido</a>
+            </li>
+            <li>
+              <a href='#atualizando-um-item'>Atualizando um item</a>
+            </li>
+            <li>
+              <a href='#deletando-um-item'>Deletando um item</a>
+            </li>
         </ul>
     </li>
     <li>
@@ -1507,6 +1525,8 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 **RESPONSE**
 
+Exemplo de um pedido sem itens:
+
 ```json
 {
   "order_id": 3,
@@ -1519,6 +1539,42 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
   "total": null,
   "itens": [],
   "cashback_id": null
+}
+```
+
+Exemplo de um pedido com itens e com um cashback gerado:
+
+```json
+{
+  "order_id": 3,
+  "sold_at": "Thu, 06 Jan 2022 12:31:18 GMT",
+  "customer": {
+    "customer_id": 3,
+    "cpf": "25579585063",
+    "name": "Flavio Reis"
+  },
+  "total": 38.58,
+  "itens": [
+    {
+      "register_id": 19,
+      "product": "guarana",
+      "value": 7.99,
+      "qty": 2
+    },
+    {
+      "register_id": 20,
+      "product": "cerveja",
+      "value": 2.35,
+      "qty": 6
+    },
+    {
+      "register_id": 21,
+      "product": "coca-cola",
+      "value": 8.5,
+      "qty": 1
+    }
+  ],
+  "cashback_id": 87
 }
 ```
 
@@ -1563,5 +1619,408 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 ```json
 {
   "message": "order not found"
+}
+```
+
+<br>
+
+## **ITEM:**
+
+### **Adicionando item a um pedido**
+
+---
+
+<p>
+  Esta rota tem por objetivo adicionar um item a um pedido. Este item é composto por três campos, sendo eles: "name" que se refere ao nome do produto, "value" que se refere ao valor unitário do produto, "qty" que se refere a quantidade de produto. Tudo isso resultando em um item que será cadastrado a um pedido de compra de um cliente. Se adicionar um novo item, será retornado uma lista com os itens atuais do pedido mais o novo item adicionado.
+</p>
+
+> Authorization: Bearer {token}
+
+|        **url**         | **method** | **status**  |
+| :--------------------: | :--------: | :---------: |
+| `/order/order_id/item` |   `POST`   | `201 - 404` |
+
+**BODY**
+
+```json
+{
+  "name": "cerveja",
+  "value": 2.35,
+  "qty": 6
+}
+```
+
+**RESPONSE**
+
+```json
+[
+  {
+    "item_id": 19,
+    "product": {
+      "product_id": 7,
+      "name": "guarana",
+      "category": "bebidas"
+    },
+    "value": 7.99,
+    "qty": 2
+  },
+  {
+    "item_id": 20,
+    "product": {
+      "product_id": 2,
+      "name": "cerveja",
+      "category": "bebidas"
+    },
+    "value": 2.35,
+    "qty": 6
+  }
+]
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  se não passar todos os campos necessários, será retornado uma mensagem de erro
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["qty is required"]
+}
+```
+
+<p>
+  se caso enviar algum valor com o tipo diferente, será retornado uma mensagem de erro
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key value must be type float"]
+}
+```
+
+<p>
+  se caso enviar alguma chave com o tipo diferente, será retornado uma mensagem de erro
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key teste invalid"]
+}
+```
+
+<p>
+  se caso enviar um produto que não existe, será retornado uma mensagem de erro
+</p>
+
+```json
+{
+  "message": "product not found"
+}
+```
+
+<p>
+se caso tentar um item com um produto que já existe no pedido, será retornado a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "message": "Item already exists"
+}
+```
+
+<br>
+
+### **Listando todos os itens**
+
+---
+
+<p>
+  essa rota tem por objetivo retornar uma lista com todos os itens
+</p>
+
+> Authorization: Bearer {token}
+
+|    **url**    | **method** |  **status**  |
+| :-----------: | :--------: | :----------: |
+| `/order/item` |   `GET`    | ` 200 - 404` |
+
+**RESPONSE**
+
+```json
+[
+  {
+    "item_id": 19,
+    "product": {
+      "product_id": 7,
+      "name": "guarana",
+      "category": "bebidas"
+    },
+    "value": 7.99,
+    "qty": 2
+  },
+  {
+    "item_id": 20,
+    "product": {
+      "product_id": 2,
+      "name": "cerveja",
+      "category": "bebidas"
+    },
+    "value": 2.35,
+    "qty": 6
+  }
+]
+```
+
+### **Listando um item especifico**
+
+---
+
+<p>
+  essa rota tem por objetivo retornar as informações de um item específico
+</p>
+
+> Authorization: Bearer {token}
+
+|        **url**        | **method** |  **status**  |
+| :-------------------: | :--------: | :----------: |
+| `/order/item/item_id` |   `GET`    | ` 200 - 404` |
+
+**RESPONSE**
+
+```json
+{
+  "item_id": 19,
+  "product": {
+    "product_id": 7,
+    "name": "guarana",
+    "category": {
+      "category_id": 1,
+      "name": "bebidas"
+    }
+  },
+  "value": 7.99,
+  "qty": 2
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  se caso não encontrar o item, será retornado uma mensgem de erro
+</p>
+
+```json
+{
+  "message": "item not found"
+}
+```
+
+<br>
+
+### **Listando todos os itens de um pedido**
+
+---
+
+<p>
+  Essa rota tem por objetivo retornar uma lista com todos os itens de um pedido de um cliente
+</p>
+
+> Authorization: Bearer {token}
+
+|        **url**         | **method** |  **status**  |
+| :--------------------: | :--------: | :----------: |
+| `/order/order_id/item` |   `GET`    | ` 200 - 404` |
+
+**RESPONSE**
+
+```json
+[
+  {
+    "item_id": 19,
+    "product": {
+      "product_id": 7,
+      "name": "guarana",
+      "category": "bebidas"
+    },
+    "value": 7.99,
+    "qty": 2
+  },
+  {
+    "item_id": 20,
+    "product": {
+      "product_id": 14,
+      "name": "cerveja",
+      "category": "bebidas"
+    },
+    "value": 2.35,
+    "qty": 6
+  },
+  {
+    "item_id": 21,
+    "product": {
+      "product_id": 6,
+      "name": "coca-cola",
+      "category": "Bebidas"
+    },
+    "value": 8.5,
+    "qty": 1
+  }
+]
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  se caso não encontrar o pedido, será retornado uma mensagem de erro
+</p>
+
+```json
+{
+  "message": "order not found"
+}
+```
+
+<br>
+
+### **Atualizando um item**
+
+---
+
+<p>
+  essa rota tem por objetivo atualizar um item. Obs: diferente das outras rotas, essa especificamente atualiza um item se for enviado todos os campos.
+</p>
+
+> Authorization: Bearer {token}
+
+|        **url**        | **method** |     **status**     |
+| :-------------------: | :--------: | :----------------: |
+| `/order/item/item_id` |   `PUT`    | ` 200 - 400 - 404` |
+
+**BODY**
+
+```json
+{
+  "name": "guarana",
+  "value": 10.0,
+  "qty": 3
+}
+```
+
+**RESPONSE**
+
+```json
+{
+  "item_id": 20,
+  "product": {
+    "product_id": 7,
+    "name": "guarana",
+    "category": {
+      "category_id": 3,
+      "name": "bebidas"
+    }
+  },
+  "value": 10.0,
+  "qty": 3
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  se caso não for enviado todos os campos necessários
+<p>
+
+```json
+{
+  "status": "error",
+  "message": ["qty is required"]
+}
+```
+
+<p>
+  se caso enviar um valor com o tipo errado
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key qty must be type int"]
+}
+```
+
+<p>
+se enviar um campo que não existe
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key teste invalid"]
+}
+```
+
+<p>
+  se caso não encontrar o item
+</p>
+
+```json
+{
+  "message": "item not found"
+}
+```
+
+<p>
+  se caso não encontrar o produto
+</p>
+
+```json
+{
+  "message": "product not found"
+}
+```
+
+<br>
+
+### **Deletando um item**
+
+---
+
+<p>
+  Essa rota tem por objetivo deletar um item
+</p>
+
+> Authorization: Bearer {token}
+
+|        **url**        | **method** |  **status**  |
+| :-------------------: | :--------: | :----------: |
+| `/order/item/item_id` |  `DELETE`  | ` 204 - 404` |
+
+**RESPONSE**
+
+> No content
+
+### **Possíveis erros**
+
+---
+
+<p>
+  se caso não encontrar o item
+</p>
+
+```json
+{
+  "message": "item not found"
 }
 ```
