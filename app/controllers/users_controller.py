@@ -106,7 +106,7 @@ def login():
     data = request.get_json()
     try:
         UserModel.validate_key_and_value(data)
-
+        UserModel.validate_login(data)
         password = data.pop('password')
 
         user: UserModel = UserModel.query.filter_by(username=data['username']).first_or_404()
@@ -120,4 +120,6 @@ def login():
     except InvalidValueError as err:
         return jsonify(err.message), HTTPStatus.BAD_REQUEST
     except InvalidKeyError as err:
+        return jsonify(err.message), HTTPStatus.BAD_REQUEST
+    except RequiredKeyError as err:
         return jsonify(err.message), HTTPStatus.BAD_REQUEST
