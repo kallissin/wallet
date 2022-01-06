@@ -14,6 +14,10 @@ class UserModel(db.Model):
         "username": str,
         "password": str
     }
+    model_to_compare_login = {
+        "username": str,
+        "password": str
+    }
 
     user_id: int
     name: str
@@ -55,11 +59,17 @@ class UserModel(db.Model):
             if key not in data:
                 raise RequiredKeyError(data, cls.model_to_compare)
 
+    @classmethod
+    def validate_login(cls, data: dict):
+        for key in cls.model_to_compare_login:
+            if key not in data:
+                raise RequiredKeyError(data, cls.model_to_compare_login)
+
     @validates('name', 'email')
     def formated_values(self, key, value):
         if key == 'name':
-            value = value.title()
+            value = value.lower()
         if key == 'email':
             value = value.lower()
-      
+
         return value

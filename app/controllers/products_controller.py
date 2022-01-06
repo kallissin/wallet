@@ -17,7 +17,7 @@ def create_product():
         ProductModel.validate_key_and_value(data)
         ProductModel.validate_required_key(data)
 
-        category = data.pop('category')
+        category = data.pop('category').lower()
         category = CategoryModel.query.filter_by(name=category).first_or_404()
 
         data['category_id'] = category.category_id
