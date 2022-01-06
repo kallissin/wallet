@@ -95,6 +95,21 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
             <li>
                 O produto é cadastrado pelo usuário, foi criado uma tabela para o mesmo para evitar redundancia de produtos no banco de dados e melhor associar ao cliente que o adquiriu.
             </li>
+            <li>
+              <a href='#criando-um-produto'>Criando um produto</a>
+            </li>
+            <li>
+              <a href='#listando-todos-os-produtos'>Listando todos os produtos</a>
+            </li>
+            <li>
+              <a href='#listando-um-produto-especifico'>Listando um produto específico</a>
+            </li>
+            <li>
+              <a href='#atualizando-um-produto'>Atualizando um produto</a>
+            </li>
+            <li>
+              <a href='#deletando-um-produto'>Deletando um produto</a>
+            </li>
         </ul>
     </li>
     <li>
@@ -120,7 +135,7 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 <br>
 
-## User:
+## **USER**:
 
 ### **Cadastrando um usuario**
 
@@ -484,7 +499,7 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 <br>
 
-## Customer
+## **CUSTOMER**
 
 ### **Cadastrando um cliente**
 
@@ -737,7 +752,7 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 <br>
 
-## Category:
+## **CATEGORY**:
 
 ### **Criando uma categoria**
 
@@ -1031,5 +1046,293 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 ```json
 {
   "message": "there are products registered with this category"
+}
+```
+
+<br>
+
+## **PRODUTO:**
+
+### **Criando um produto**
+
+---
+
+<p>
+  Rota responsável por criar um produto
+</p>
+
+> Authorization: Bearer {token}
+
+|  **url**   | **method** |    **status**     |
+| :--------: | :--------: | :---------------: |
+| `/product` |   `POST`   | `201 - 400 - 409` |
+
+**BODY**
+
+```json
+{
+  "name": "cerveja",
+  "category": "bebidas"
+}
+```
+
+**RESPONSE**
+
+```json
+{
+  "product_id": 2,
+  "name": "cerveja",
+  "category": {
+    "category_id": 1,
+    "name": "bebidas",
+    "discount": 0.05
+  }
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  se caso tentar cadastrar um produto que já existe, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "message": "name already exists"
+}
+```
+
+<p>
+  se passar algum valor com o tipo diferente, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key category must be type str"]
+}
+```
+
+<p>
+  se caso tentar cadastrar um produto sem enviar algum campo, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["category is required"]
+}
+```
+
+<p>
+  se tentar cadastrar um produto com algum campo que não existe, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key teste invalid"]
+}
+```
+
+### **Listando todos os produtos**
+
+---
+
+<p>
+  Rota responsável por renderizar todos os produtos cadastrados
+</p>
+
+> Authorization: Bearer {token}
+
+|  **url**   | **method** | **status** |
+| :--------: | :--------: | :--------: |
+| `/product` |   `GET`    |   `200`    |
+
+**RESPONSE**
+
+```json
+[
+  {
+    "product_id": 1,
+    "name": "guarana",
+    "category": {
+      "category_id": 1,
+      "name": "bebidas",
+      "discount": 0.05
+    }
+  },
+  {
+    "product_id": 2,
+    "name": "cerveja",
+    "category": {
+      "category_id": 1,
+      "name": "bebidas",
+      "discount": 0.05
+    }
+  }
+]
+```
+
+<br>
+
+### **Listando um produto especifico**
+
+---
+
+<p>
+  Rota responsável por buscar um produto específico
+</p>
+
+> Authorization: Bearer {token}
+
+|        **url**        | **method** | **status**  |
+| :-------------------: | :--------: | :---------: |
+| `/product/product_id` |   `GET`    | `200 - 404` |
+
+**RESPONSE**
+
+```json
+{
+  "product_id": 1,
+  "name": "guarana",
+  "category": {
+    "category_id": 1,
+    "name": "bebidas",
+    "discount": 0.05
+  }
+}
+```
+
+### **Possíveis problemas**
+
+---
+
+<p>
+  se caso não encontrar o produto específico, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "message": "product not found"
+}
+```
+
+<br>
+
+### **Atualizando um produto**
+
+---
+
+<p>
+  Rota responsável por atualizar um produto
+</p>
+
+> Authorization: Bearer {token}
+
+|        **url**        | **method** |       **status**        |
+| :-------------------: | :--------: | :---------------------: |
+| `/product/product_id` |  `PATCH`   | `200 - 400 - 404 - 409` |
+
+**BODY**
+
+```json
+{
+  "category": "bebidas"
+}
+```
+
+**RESPONSE**
+
+```json
+{
+  "product_id": 1,
+  "name": "guarana",
+  "category": {
+    "category_id": 1,
+    "name": "bebidas",
+    "discount": 0.05
+  }
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  se caso não encontrar o produto, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "message": "product not found"
+}
+```
+
+<p>
+  se caso tentar atualizar o nome do produto por um nome que ja existe, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "message": "name already exists"
+}
+```
+
+<p>
+  se caso tentar atualizar a categoria de um produto e não for encontrado no banco de dados, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "message": "category not found"
+}
+```
+
+<p>
+  se caso tentar atualizar um produto com um campo que não existe, receberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "status": "error",
+  "message": ["key name1 invalid"]
+}
+```
+
+<br>
+
+### **Deletando um produto**
+
+---
+
+<p>
+  Rota responsável por deletar um produto
+</p>
+
+> Authorization: Bearer {token}
+
+|        **url**        | **method** | **status**  |
+| :-------------------: | :--------: | :---------: |
+| `/product/product_id` |  `DELETE`  | `204 - 404` |
+
+**RESPONSE**
+
+> No content
+
+### **Possíveis erros**
+
+---
+
+<p>
+  se caso não encontrar o produto, reberá a seguinte mensagem de erro
+</p>
+
+```json
+{
+  "message": "product not found"
 }
 ```
