@@ -14,6 +14,33 @@ O cashback é gerado da seguinte forma:
 A fim de evitar inconsistnências, como dados duplicados ou redundantes, apliquei a normalização de dados, montando relações mais estruturadas e performática, assim como melhorar a integridade da base de dados.
 </p>
 
+<h2>Instruções:</h2>
+<h3><b>Para rodar a aplicação Local:</b></h3>
+
+- `python -m venv venv`
+- `source venv/bin/activate`
+- `pip install -r requirements.txt`
+- `flask run`
+
+<p>Para criar um usuário admin <b>local</b>:</p>
+
+`flask admin create name email username password`
+
+**Exemplo:**
+
+`flask admin create kelvin kelvin@email.com kelvin42 123456`
+
+<h3><b>Aplicação no Heroku:</b></h3>
+<a>Link aqui</a>
+
+<p>Para criar um usuário admin <b>heroku</b>:</p>
+
+`heroku run --app wallet flask admin create name email username password`
+
+**Exemplo:**
+
+`heroku run --app wallet flask admin create kelvin kelvin@email.com kelvin123 123456`
+
 <h2>Indice:</h2>
 <ol>
     <li>
@@ -118,7 +145,7 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
       </ul>
     </li>
     <li>
-        <a href='#itens'>Itens:</a>
+        <a href='#item'>Item:</a>
         <ul>
             <li>
                 Os itens fazem parte de uma order, neste item esta presente uma lista de itens contendo produtos, quantidade e valores.
@@ -151,6 +178,12 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
         <ul>
             <li>
                 O cashback é gerado para os clientes com base no disconto total adquirido em sua compra.
+            </li>
+             <li>
+              <a href='#gerando-um-cashback'>Gerando um cashback</a>
+            </li>
+            <li>
+              <a href='#listando-um-cashback-especifico'>Listando um cashback específico</a>
             </li>
         </ul>
     </li>
@@ -2022,5 +2055,114 @@ se enviar um campo que não existe
 ```json
 {
   "message": "item not found"
+}
+```
+
+<br>
+
+## **CASHBACK**
+
+### **Gerando um cashback**
+
+---
+
+<p>
+  Esta rota tem por objetivo gerar cashback para um pedido de compra de um cliente. Obs: se caso adicionar um novo item ao pedido, será necessário gerar um novo cashback para atualizar o valor de desconto para o cliente.
+</p>
+
+|   **url**   | **method** |  **status**  |
+| :---------: | :--------: | :----------: |
+| `/cashback` |   `POST`   | ` 201 - 404` |
+
+**BODY**
+
+```json
+{
+  "order_id": 17
+}
+```
+
+**RESPONSE**
+
+```json
+{
+  "order_id": 17,
+  "sold_at": "Thu, 06 Jan 2022 12:31:18 GMT",
+  "customer": {
+    "customer_id": 3,
+    "cpf": "25579585063",
+    "name": "Flavio Reis"
+  },
+  "total": 54.48,
+  "itens": [
+    {
+      "register_id": 19,
+      "product": "guarana",
+      "value": 7.99,
+      "qty": 2
+    },
+    {
+      "register_id": 21,
+      "product": "coca-cola",
+      "value": 8.5,
+      "qty": 1
+    },
+    {
+      "register_id": 20,
+      "product": "cerveja",
+      "value": 10.0,
+      "qty": 3
+    }
+  ],
+  "cashback": {
+    "cashback_id": 87,
+    "value": 2.73
+  }
+}
+```
+
+### **Possíveis erros**
+
+---
+
+<p>
+  se caso não encontrar o pedido
+</p>
+
+```json
+{
+  "message": "order not found"
+}
+```
+
+<br>
+
+### **Listando um cashback especifico**
+
+---
+
+<p>
+  Essa rota tem por objetivo, listar as informações do cashback específico que foi gerado para um cliente
+</p>
+
+**RESPONSE**
+
+```json
+{
+  "createdAt": "2022-01-06T05:03:49.840Z",
+  "message": "Cashback criado com sucesso!",
+  "id": "87",
+  "cashback": "1.94",
+  "document": "25579585063"
+}
+```
+
+### **Possíveis erros**
+
+---
+
+```json
+{
+  "message": "cashback not found"
 }
 ```
