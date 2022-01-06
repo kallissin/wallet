@@ -1,7 +1,7 @@
 from flask import request, jsonify, current_app
 from http import HTTPStatus
 from werkzeug.exceptions import NotFound
-from app.exceptions.exc import InvalidKeyError, InvalidValueError, RequiredKeyError
+from app.exceptions.exc import InvalidKeyError, InvalidTypeCpfError, InvalidValueError, RequiredKeyError
 from app.models.order_model import OrderModel
 from app.models.customer_model import CustomerModel
 from app.models.order_product_model import OrderProductModel
@@ -24,6 +24,7 @@ def create_order():
     try:
         OrderModel.validate_key_and_value(data)
         OrderModel.validate_required_key(data)
+        CustomerModel(**data)
         customer = CustomerModel.query.filter_by(cpf=data['cpf']).first_or_404()
         order = OrderModel(customer_id=customer.customer_id)
 
@@ -39,6 +40,8 @@ def create_order():
         return jsonify(err.message), HTTPStatus.BAD_REQUEST
     except NotFound:
         return jsonify({"message": "customer not found"}), HTTPStatus.NOT_FOUND
+    except InvalidTypeCpfError as err:
+        return jsonify({"message": str(err)}), HTTPStatus.BAD_REQUEST
 
 
 @jwt_required()
