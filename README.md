@@ -617,6 +617,16 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 ```
 
 <p>
+  se o cpf não tiver 11 digitos, receberá uma mensagem de erro
+</p>
+
+```json
+{
+  "message": "cpf must be 11 digits"
+}
+```
+
+<p>
   se digitar um cpf que não é válido, exemplo: 11111111111. Receberá o seguinte erro
 <p>
 
