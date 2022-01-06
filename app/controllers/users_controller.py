@@ -31,7 +31,7 @@ def create_user():
     except IntegrityError as err:
         if isinstance(err.orig, UniqueViolation):
             constraint = str(err.args).split('_')[1]
-            if constraint == 'username':    
+            if constraint == 'username':
                 return jsonify({"message": "username already exists"}), HTTPStatus.CONFLICT
             if constraint == 'email':
                 return jsonify({"message": "email already exists"}), HTTPStatus.CONFLICT

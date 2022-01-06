@@ -89,7 +89,7 @@ def insert_item(order_id):
     try:
         OrderProductModel.validate_key_and_value(data)
         OrderProductModel.validate_required_key(data)
-        product_name = data.pop('name')
+        product_name = data.pop('name').lower()
         product = ProductModel.query.filter_by(name=product_name).first_or_404()
         item = OrderProductModel(product=product, **data)
     except NotFound:
@@ -226,7 +226,7 @@ def update_item(item_id):
     try:
         OrderProductModel.validate_key_and_value(data)
         OrderProductModel.validate_required_key(data)
-        product_name = data.pop('name')
+        product_name = data.pop('name').lower()
         product = ProductModel.query.filter_by(name=product_name).first_or_404()
         setattr(item, 'product', product)
         for key, value in data.items():
