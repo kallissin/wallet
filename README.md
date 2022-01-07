@@ -31,7 +31,13 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 `flask admin create kelvin kelvin@email.com kelvin42 123456`
 
 <h3><b>Aplicação no Heroku:</b></h3>
-<a>Link aqui</a>
+<a>https://wallet-backend-flask.herokuapp.com/api</a>
+
+<br>
+
+<p>baixe a collection no seu insomnia para utilizar os endpoints</p>
+
+[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=Doc%20wallet&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fkallissin%2Finsomnia-wallet%2Fmaster%2Fexport.json%3Ftoken%3DGHSAT0AAAAAABPDN7HADHYDDI6LDRE7642AYOYXJMA)
 
 <p>Para criar um usuário admin <b>heroku</b>:</p>
 
