@@ -30,6 +30,11 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 `flask admin create kelvin kelvin@email.com kelvin42 123456`
 
+<h4>Não se esqueça de configurar o arquivo <b>.env</b>: </h4>
+<p>SQLALCHEMY_TRACK_MODIFICATIONS</p>
+<p>JSON_SORT_KEYS</p>
+<p>Para essas duas variáveis especificamente voce pode definir apenas aspas <b>""</b> para o valor delas serem consideradas como falsy</p>
+
 <h3><b>Aplicação no Heroku:</b></h3>
 <a>https://wallet-backend-flask.herokuapp.com/api</a>
 
