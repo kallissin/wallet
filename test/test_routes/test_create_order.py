@@ -1,6 +1,5 @@
 from flask_jwt_extended import create_access_token
 from app import create_app
-from datetime import datetime
 
 
 def test_create_order(client):
