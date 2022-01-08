@@ -27,10 +27,10 @@ def test_create_order(client):
 
     client.post("/api/customer", json=customer, headers=credentials)
     res = client.post("/api/order", json=order, headers=credentials)
-
+    sold_at = res.get_json()['sold_at']
     expected = {
         "order_id": 1,
-        "sold_at": datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT'),
+        "sold_at": sold_at,
         "total": None,
         "customer": {
             "customer_id": 1,
