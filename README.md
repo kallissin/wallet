@@ -41,11 +41,11 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 <p>Para criar um usuário admin <b>heroku</b>:</p>
 
-`heroku run --app wallet flask admin create name email username password`
+`heroku run --app wallet-backend-flask flask admin create name email username password`
 
 **Exemplo:**
 
-`heroku run --app wallet flask admin create kelvin kelvin@email.com kelvin123 123456`
+`heroku run --app wallet-backend-flask flask admin create kelvin kelvin@email.com kelvin123 123456`
 
 <h2>Indice:</h2>
 <ol>
