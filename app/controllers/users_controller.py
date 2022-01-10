@@ -54,7 +54,6 @@ def get_user_by_id(user_id):
         return jsonify({"message": "user not found"}), HTTPStatus.NOT_FOUND
 
 
-# TODO: criar validação para atualizar os dados somente se for o mesmo id ou admin
 @jwt_required()
 def update_user(user_id):
     data = request.get_json()
@@ -105,7 +104,6 @@ def delete_user(user_id):
         return jsonify(""), HTTPStatus.NO_CONTENT
     except NotFound:
         return jsonify({"message": "user not found"}), HTTPStatus.NOT_FOUND
-# TODO: user/session criar uma função para visualizar o perfil do usuário que fez a requisição
 
 
 def login():
