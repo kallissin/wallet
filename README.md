@@ -42,7 +42,7 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 <p>baixe a collection no seu insomnia para utilizar os endpoints</p>
 
-[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=Doc%20wallet&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fkallissin%2Finsomnia-wallet%2Fmaster%2Fexport.json%3Ftoken%3DGHSAT0AAAAAABPDN7HADHYDDI6LDRE7642AYOYXJMA)
+[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=wallet&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fkallissin%2Finsomnia-wallet%2Fmaster%2Fexport.json%3Ftoken%3DGHSAT0AAAAAABPDN7HAYOAV7ZHSSWOQ3LFWYO4GMQQ)
 
 <p>Para criar um usuário admin <b>heroku</b>:</p>
 
