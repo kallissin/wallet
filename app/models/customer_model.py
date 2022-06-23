@@ -1,9 +1,11 @@
-from sqlalchemy import Column, String, Integer
-from app.configs.database import db
-from dataclasses import dataclass
-from sqlalchemy.orm import validates
-from app.exceptions.exc import InvalidKeyError, InvalidTypeCpfError, InvalidValueError, RequiredKeyError
 import re
+from dataclasses import dataclass
+
+from app.configs.database import db
+from app.exceptions.exc import (InvalidKeyError, InvalidTypeCpfError,
+                                InvalidValueError, RequiredKeyError)
+from sqlalchemy import Column, Integer, Unicode
+from sqlalchemy.orm import validates
 
 
 @dataclass
@@ -20,8 +22,8 @@ class CustomerModel(db.Model):
     __tablename__ = 'customers'
 
     customer_id = Column(Integer, primary_key=True)
-    cpf = Column(String(11), unique=True, nullable=False)
-    name = Column(String(150), nullable=False)
+    cpf = Column(Unicode(11), unique=True, nullable=False)
+    name = Column(Unicode(150), nullable=False)
 
     @classmethod
     def validate_key_and_value(cls, data: dict):

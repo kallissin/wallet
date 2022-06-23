@@ -1,8 +1,10 @@
-from sqlalchemy import Column, String, Integer, Float
-from app.configs.database import db
 from dataclasses import dataclass
+
+from app.configs.database import db
+from app.exceptions.exc import (InvalidKeyError, InvalidValueError,
+                                RequiredKeyError)
+from sqlalchemy import Column, Float, Integer, Unicode
 from sqlalchemy.orm import validates
-from app.exceptions.exc import InvalidKeyError, InvalidValueError, RequiredKeyError
 
 
 @dataclass
@@ -19,7 +21,7 @@ class CategoryModel(db.Model):
     __tablename__ = 'categories'
 
     category_id = Column(Integer, primary_key=True)
-    name = Column(String(150), unique=True, nullable=False)
+    name = Column(Unicode(150), unique=True, nullable=False)
     discount = Column(Float, nullable=False)
 
     @classmethod

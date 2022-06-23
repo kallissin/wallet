@@ -1,9 +1,11 @@
-from sqlalchemy import Column, String, Integer
-from app.configs.database import db
 from dataclasses import dataclass
-from werkzeug.security import generate_password_hash, check_password_hash
-from app.exceptions.exc import InvalidValueError, InvalidKeyError, RequiredKeyError
+
+from app.configs.database import db
+from app.exceptions.exc import (InvalidKeyError, InvalidValueError,
+                                RequiredKeyError)
+from sqlalchemy import Column, Integer, Unicode
 from sqlalchemy.orm import validates
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 @dataclass
@@ -28,11 +30,11 @@ class UserModel(db.Model):
     __tablename__ = 'users'
 
     user_id = Column(Integer, primary_key=True)
-    name = Column(String(150), nullable=False)
-    email = Column(String, unique=True, nullable=False)
-    username = Column(String(100), unique=True, nullable=False)
-    password_hash = Column(String, nullable=False)
-    role = Column(String, default='user', nullable=False)
+    name = Column(Unicode(150), nullable=False)
+    email = Column(Unicode(255), unique=True, nullable=False)
+    username = Column(Unicode(100), unique=True, nullable=False)
+    password_hash = Column(Unicode(255), nullable=False)
+    role = Column(Unicode(100), default='user', nullable=False)
 
     @property
     def password(self):

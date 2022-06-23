@@ -1,10 +1,13 @@
-from sqlalchemy import Column, String, Integer
-from sqlalchemy.sql.schema import ForeignKey
-from app.configs.database import db
 from dataclasses import dataclass
-from app.exceptions.exc import InvalidKeyError, InvalidValueError, RequiredKeyError
-from .category_model import CategoryModel
+
+from app.configs.database import db
+from app.exceptions.exc import (InvalidKeyError, InvalidValueError,
+                                RequiredKeyError)
+from sqlalchemy import Column, Integer, Unicode
 from sqlalchemy.orm import relationship, validates
+from sqlalchemy.sql.schema import ForeignKey
+
+from .category_model import CategoryModel
 
 
 @dataclass
@@ -21,7 +24,7 @@ class ProductModel(db.Model):
     __tablename__ = 'products'
 
     product_id = Column(Integer, primary_key=True)
-    name = Column(String(150), unique=True, nullable=False)
+    name = Column(Unicode(150), unique=True, nullable=False)
     category_id = Column(Integer, ForeignKey('categories.category_id'), nullable=False)
 
     category = relationship('CategoryModel', backref='products', uselist=False)
