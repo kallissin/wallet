@@ -4,13 +4,13 @@ services:
   mysql-main:
     image: mysql:8.0
     environment:
-      - MYSQL_ROOT_PASSWORD=1234
-      - MYSQL_DATABASE=wallet_main
+      - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_DATABASE=${DATABASE_NAME}
     volumes:
       - mysql-db-main:/bitnami/mysql/data
     ports:
       - "3306:3306"
-  
+
   app:
     restart: always
     build: .
@@ -21,10 +21,10 @@ services:
       - SQLALCHEMY_TRACK_MODIFICATIONS=True
       - JSON_SORT_KEYS=JSON_SORT_KEYS=True
       - JWT_SECRET_KEY=dsakljes#@154nmvfg
-      - DATABASE_HOST=mysql-main
-      - DATABASE_NAME=wallet_main
-      - DATABASE_PASSWORD=1234
-      - DATABASE_USER=root
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_USER=${DATABASE_USER}
     volumes:
       - .:/app
     depends_on:

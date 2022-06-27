@@ -7,7 +7,6 @@ DATABASE = {
     "name": os.environ.get("DATABASE_NAME")
 }
 
-
 SQLALCHEMY_URL = "mysql+pymysql://{user}:{password}@{host}/{name}".format(
     user=DATABASE['user'],
     password=DATABASE['password'],
