@@ -7,9 +7,19 @@ DATABASE = {
     "name": os.environ.get("DATABASE_NAME")
 }
 
-SQLALCHEMY_URL = "mysql+pymysql://{user}:{password}@{host}/{name}".format(
-    user=DATABASE['user'],
-    password=DATABASE['password'],
-    host=DATABASE['host'],
-    name=DATABASE['name'],
-)
+
+ENV = os.environ.get("FLASK_ENV")
+
+if ENV == "development":
+    SQLALCHEMY_URL = "postgresql://{user}:{password}@{host}:5432?sslmode=disable".format(
+        user=DATABASE['user'],
+        password=DATABASE['password'],
+        host=DATABASE['host'],
+    )
+else:
+    SQLALCHEMY_URL = "postgres://{user}:{password}@{host}:5432/{name}".format(
+        user=DATABASE['user'],
+        password=DATABASE['password'],
+        host=DATABASE['host'],
+        name=DATABASE['name']
+    )

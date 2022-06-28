@@ -13,7 +13,8 @@ build-no-cache:
 bash:
 	docker-compose run app bash
 
-run: docker-compose up
+run: 
+	docker-compose up
 
 run-debug:
 	docker-compose run --service-ports app

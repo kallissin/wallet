@@ -1,15 +1,15 @@
 version: '3'
 
 services:
-  mysql-main:
-    image: mysql:8.0
+  postgres-main:
+    image: postgres:14.4
     environment:
-      - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD}
-      - MYSQL_DATABASE=${DATABASE_NAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DATABASE=${DATABASE_NAME}
     volumes:
-      - mysql-db-main:/bitnami/mysql/data
+      - postgres-db-main:/bitnami/postgres/data
     ports:
-      - "3306:3306"
+      - "5432:5432"
 
   app:
     restart: always
@@ -28,7 +28,7 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - "mysql-main"
+      - "postgres-main"
 
 volumes:
-  mysql-db-main:
+  postgres-db-main:
