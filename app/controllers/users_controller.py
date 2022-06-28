@@ -1,13 +1,16 @@
-from flask import jsonify, request, current_app
-from app.exceptions.exc import InvalidValueError, InvalidKeyError, RequiredKeyError
-from app.models.user_model import UserModel
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import datetime
-from werkzeug.exceptions import NotFound
 from http import HTTPStatus
-from sqlalchemy.exc import IntegrityError
-from psycopg2.errors import UniqueViolation
+
+from app.exceptions.exc import (InvalidKeyError, InvalidValueError,
+                                RequiredKeyError)
+from app.models.user_model import UserModel
 from app.utils.permission import permission_role
+from flask import current_app, jsonify, request
+from flask_jwt_extended import (create_access_token, get_jwt_identity,
+                                jwt_required)
+from psycopg2.errors import UniqueViolation
+from sqlalchemy.exc import IntegrityError
+from werkzeug.exceptions import NotFound
 
 
 def create_user():
