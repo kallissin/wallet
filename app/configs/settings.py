@@ -8,7 +8,7 @@ DATABASE = {
 }
 
 
-ENV = os.environ.get("FLASK_ENV")
+ENV = os.environ.get("ENV")
 
 if ENV == "development":
     SQLALCHEMY_URL = "postgresql://{user}:{password}@{host}:5432?sslmode=disable".format(
@@ -17,7 +17,7 @@ if ENV == "development":
         host=DATABASE['host'],
     )
 else:
-    SQLALCHEMY_URL = "postgres://{user}:{password}@{host}:5432/{name}".format(
+    SQLALCHEMY_URL = "postgresql://{user}:{password}@{host}:5432/{name}".format(
         user=DATABASE['user'],
         password=DATABASE['password'],
         host=DATABASE['host'],
