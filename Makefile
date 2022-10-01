@@ -19,5 +19,5 @@ run:
 run-debug:
 	docker-compose run --service-ports app
 
-create-revisions:
+run-revisions:
 	docker-compose run app bash -c "flask db upgrade"

@@ -1,20 +1,40 @@
 import pytest
 from app import create_app
 from app.configs.database import db
+from flask_jwt_extended import create_access_token
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def app():
-    return create_app()
-
-
-@pytest.fixture
-def client():
     app = create_app()
-    app.config['TESTING'] = True
-    app.testing = True
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
-    client = app.test_client()
+    app.config.update({"TESTING": True})
+    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:postgres@postgres-test:5432?sslmode=disable"
     with app.app_context():
         db.create_all()
-    yield client
+        app.db = db
+        yield app
+        db.session.remove()
+        db.drop_all()
+
+
+@pytest.fixture()
+def client(app):
+    return app.test_client()
+
+
+@pytest.fixture()
+def app_session(app):
+    return app.db.session
+
+
+@pytest.fixture()
+def authorization(app):
+    user = {
+        "username": "kallissin",
+        "password": "123456",
+        "role": "admin"
+    }
+
+    acess_token = create_access_token(user)
+    authorization = "Bearer " + acess_token
+    return authorization
