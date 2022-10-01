@@ -8,7 +8,7 @@ from flask_jwt_extended import create_access_token
 def app():
     app = create_app()
     app.config.update({"TESTING": True})
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:postgres@postgres-test:5432?sslmode=disable"
     with app.app_context():
         db.create_all()
         app.db = db
