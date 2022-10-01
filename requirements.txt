@@ -10,6 +10,8 @@ cryptography==37.0.2
 decorator==5.1.1
 environs==9.3.5
 executing==0.8.3
+factory-boy==3.2.1
+Faker==13.14.0
 flake8==4.0.1
 Flask==2.0.2
 Flask-Cors==3.0.10
@@ -49,6 +51,7 @@ PyJWT==2.3.0
 PyMySQL==1.0.2
 pyparsing==3.0.6
 pytest==6.2.5
+python-dateutil==2.8.2
 python-dotenv==0.19.2
 requests==2.26.0
 six==1.16.0
