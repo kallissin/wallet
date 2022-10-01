@@ -2,27 +2,67 @@
     Wallet - API
 </h1>
 
-<p>
-Esta api tem por base gerenciar produtos que foram adquiridos pelos clientes de uma determinada empresa, e gerar cashback para as orders dos clientes.
-</P>
+
+Esta api tem por base gerenciar produtos que foram adquiridos pelos clientes de uma determinada empresa, e gerar cashback para os pedidos dos clientes.
+
 
 O cashback é gerado da seguinte forma:
 
 > Cada produto tem a sua categoria que é criado pelo admin do sistema, e a categoria por sua vez tem um campo _discount_ que é o percentual em decimal. Então é calculado o desconto do produto com base na quantidade de um determinado produto que o cliente adquiriu, então é somando todos os descontos e calculado o cashback.
 
-<p>
+
 A fim de evitar inconsistnências, como dados duplicados ou redundantes, apliquei a normalização de dados, montando relações mais estruturadas e performática, assim como melhorar a integridade da base de dados.
-</p>
 
-<h2>Instruções:</h2>
-<h3><b>Para rodar a aplicação Local:</b></h3>
 
-- `python -m venv venv`
-- `source venv/bin/activate`
-- `pip install -r requirements.txt`
-- `flask run`
+## Instruções:
 
-<p>Para criar um usuário admin <b>local</b>:</p>
+1 - Adicione as variáveis de ambiente em seu arquivo **.env** conforme o arquivo **.env.example**
+
+2 - Buildar o projeto
+
+```bash
+make build
+```
+
+3 - Criar um ambiente virtual
+```bash
+python -m venv venv
+```
+
+4 - Ativando o ambiente
+
+```bash
+source venv/bin/activate
+```
+
+5 - Instalando as libs
+
+```bash
+pip install -r requirements.txt
+```
+
+6 - Gerando as tabelas no banco de dados
+
+```bash
+make run-revisions
+```
+
+7 - Rodando os Tests
+
+```bash
+make bash
+```
+
+```bash
+pytest -s
+```
+
+8 - Rodando a aplicação
+
+```bash
+make run
+```
+Para criar um usuário admin **local**
 
 `flask admin create name email username password`
 
@@ -30,21 +70,17 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 `flask admin create kelvin kelvin@email.com kelvin42 123456`
 
-<h4>Não se esqueça de configurar o arquivo <b>.env</b>: </h4>
-<p>SQLALCHEMY_TRACK_MODIFICATIONS</p>
-<p>JSON_SORT_KEYS</p>
-<p>Para essas duas variáveis especificamente voce pode definir apenas aspas <b>""</b> para o valor delas serem consideradas como falsy</p>
 
-<h3><b>Aplicação no Heroku:</b></h3>
-<a>https://wallet-backend-flask.herokuapp.com/api</a>
+## Aplicação no Heroku
 
-<br>
+[Link](https://wallet-backend-flask.herokuapp.com/api)
 
-<p>baixe a collection no seu insomnia para utilizar os endpoints</p>
+
+baixe a collection no seu insomnia para utilizar os endpoints
 
 [![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=wallet&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fkallissin%2Finsomnia-wallet%2Fmaster%2Fexport.json%3Ftoken%3DGHSAT0AAAAAABPDN7HAYOAV7ZHSSWOQ3LFWYO4GMQQ)
 
-<p>Para criar um usuário admin <b>heroku</b>:</p>
+Para criar um usuário admin **heroku**
 
 `heroku run --app wallet-backend-flask flask admin create name email username password`
 
@@ -52,7 +88,7 @@ A fim de evitar inconsistnências, como dados duplicados ou redundantes, aplique
 
 `heroku run --app wallet-backend-flask flask admin create kelvin kelvin@email.com kelvin123 123456`
 
-<h2>Indice:</h2>
+## Indice:
 <ol>
     <li>
         <a href='#user'>User:</a> 
