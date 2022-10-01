@@ -1,3 +1,5 @@
+from test._factories import UserFactory
+
 from app.models.user_model import UserModel
 from flask import jsonify
 
@@ -99,4 +101,22 @@ def test_create_user_failed_with_invalid_key(client, app_session):
     }
 
 
-# test_create_user_failed_already_username
+def test_create_user_failed_already_username(client, app_session):
+    UserFactory(password="123456", username="Almeida")
+    
+    payload = {
+        "name": "João",
+        "email": "joao@email.com",
+        "username": "Almeida",
+        "password": "123456"
+    }
+
+    response = client.post(
+        "/api/user",
+        headers={'Content-Type': 'application/json'},
+        json=payload,
+    )
+    # users = app_session.query(UserModel).all()
+    # TODO: Implementar uma forma para a sessão não fechar
+    assert response.json == {'message': 'username already exists'}
+    assert response.status_code == 409
